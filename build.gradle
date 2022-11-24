@@ -19,7 +19,7 @@
 // TODO: this is work in progress, please follow FINERACT-1171
 buildscript {
     ext {
-        jacocoVersion = '0.8.7'
+        jacocoVersion = '0.8.8'
         retrofitVersion = '2.9.0'
         okhttpVersion = '4.9.3'
         oltuVersion = '1.0.1'
@@ -80,6 +80,8 @@ plugins {
     id 'com.github.andygoossens.modernizer' version '1.6.2' apply false
     id 'com.github.spotbugs' version '5.0.9' apply false
     id 'se.thinkcode.cucumber-runner' version '0.0.11' apply false
+    id 'jacoco'
+    id 'application'
 }
 
 apply from: "${rootDir}/buildSrc/src/main/groovy/org.apache.fineract.release.gradle"
@@ -116,6 +118,8 @@ allprojects  {
             property "sonar.projectKey", "FITER1_fineract-template"
             property "sonar.organization", "fiter1"
             property "sonar.host.url", "https://sonarcloud.io"
+            property "sonar.branch.name", "fiter/latam/dev"
+            property "sonar.coverage.exclusions", "**/*Exception.java,**/migration/Migration*.java,**/*Config.java"
         }
     }
 
@@ -388,16 +392,17 @@ configure(project.fineractJavaProjects) {
 
     // Configuration for JaCoCo code coverage task
     // https://www.eclemma.org/jacoco/
+    // https://docs.gradle.org/current/userguide/jacoco_plugin.html
     jacoco {
         toolVersion = jacocoVersion
-        reportsDir = file("$buildDir/reports/jacoco")
     }
 
     jacocoTestReport {
+        dependsOn test
         reports {
-            html.enabled=true
-            xml.enabled=true
-            html.destination file("${buildDir}/code-coverage")
+            csv.enabled(false)
+            html.enabled(true)
+            xml.enabled(true)
         }
     }
 
@@ -539,6 +544,7 @@ configure(project.fineractJavaProjects) {
 
     test {
         useJUnitPlatform()
+        finalizedBy 'jacocoTestReport'
         dependsOn 'cucumber'
 
         if (project.hasProperty('excludeTests')) {
@@ -668,5 +674,17 @@ task printSourceSetInformation() {
             }
             println ""
         }
+    }
+}
+
+task generateMergedReport(type: JacocoReport) {
+    executionData.setFrom project.fileTree(dir: '.', include: '**/build/jacoco/*.exec')
+    classDirectories.setFrom files(subprojects.sourceSets.main.output)
+    sourceDirectories.setFrom files(project.sourceSets.main.allSource.srcDirs)
+
+    reports {
+        csv.enabled(false)
+        xml.enabled(true)
+        html.enabled(true)
     }
 }
