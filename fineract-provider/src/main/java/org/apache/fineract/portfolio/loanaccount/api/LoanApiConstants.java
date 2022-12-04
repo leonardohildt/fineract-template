@@ -142,4 +142,5 @@ public interface LoanApiConstants {
     String fixedPrincipalPercentagePerInstallmentParamName = "fixedPrincipalPercentagePerInstallment";
 
     String LOAN_ASSOCIATIONS_ALL = "all";
+    String cupoIdParameterName = "cupoId";
 }

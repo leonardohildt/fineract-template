@@ -947,8 +947,9 @@ public class SavingsAccountReadPlatformServiceImpl implements SavingsAccountRead
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final CurrencyData currency = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol,
-                    currencyNameCode);
+                    currencyNameCode, intCode);
 
             final BigDecimal nominalAnnualInterestRate = rs.getBigDecimal("nominalAnnualInterestRate");
 
@@ -1403,8 +1404,9 @@ public class SavingsAccountReadPlatformServiceImpl implements SavingsAccountRead
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final CurrencyData currency = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol,
-                    currencyNameCode);
+                    currencyNameCode, intCode);
 
             AccountTransferData transfer = null;
             final Long fromTransferId = JdbcSupport.getLong(rs, "fromTransferId");
@@ -1468,8 +1470,9 @@ public class SavingsAccountReadPlatformServiceImpl implements SavingsAccountRead
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final CurrencyData currency = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol,
-                    currencyNameCode);
+                    currencyNameCode, intCode);
 
             return SavingsAccountTransactionData.template(savingsId, accountNo, DateUtils.getBusinessLocalDate(), currency);
         }
@@ -1544,8 +1547,9 @@ public class SavingsAccountReadPlatformServiceImpl implements SavingsAccountRead
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final CurrencyData currency = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol,
-                    currencyNameCode);
+                    currencyNameCode, intCode);
 
             final BigDecimal nominalAnnualIterestRate = rs.getBigDecimal("nominalAnnualIterestRate");
 

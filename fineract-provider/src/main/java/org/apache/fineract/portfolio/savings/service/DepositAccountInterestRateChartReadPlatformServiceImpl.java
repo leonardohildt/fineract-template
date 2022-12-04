@@ -371,9 +371,10 @@ public class DepositAccountInterestRateChartReadPlatformServiceImpl implements D
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             // currency
             final CurrencyData currency = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol,
-                    currencyNameCode);
+                    currencyNameCode, intCode);
 
             return DepositAccountInterestRateChartSlabData.instance(id, description, periodType, fromPeriod, toPeriod, amountRangeFrom,
                     amountRangeTo, annualInterestRate, currency);

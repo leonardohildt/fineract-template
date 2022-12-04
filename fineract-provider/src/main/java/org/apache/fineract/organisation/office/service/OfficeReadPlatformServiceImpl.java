@@ -139,9 +139,10 @@ public class OfficeReadPlatformServiceImpl implements OfficeReadPlatformService 
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
 
             final CurrencyData currencyData = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf,
-                    currencyDisplaySymbol, currencyNameCode);
+                    currencyDisplaySymbol, currencyNameCode, intCode);
 
             final BigDecimal transactionAmount = rs.getBigDecimal("transactionAmount");
             final String description = rs.getString("description");

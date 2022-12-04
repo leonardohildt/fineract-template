@@ -231,8 +231,9 @@ public class ShareProductReadPlatformServiceImpl implements ProductReadPlatformS
             final String currencyNameCode = rs.getString("currencyNameCode");
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "currency_multiplesof");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final CurrencyData currency = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol,
-                    currencyNameCode);
+                    currencyNameCode, intCode);
 
             final Long totalShares = rs.getLong("total_shares");
             final Long issuedShares = JdbcSupport.getLongDefaultToNullIfZero(rs, "issued_shares");

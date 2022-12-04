@@ -81,9 +81,10 @@ public class CollateralReadPlatformServiceImpl implements CollateralReadPlatform
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDecimalPlaces = JdbcSupport.getInteger(rs, "currencyDecimalPlaces");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
 
             final CurrencyData currencyData = new CurrencyData(currencyCode, currencyName, currencyDecimalPlaces, inMultiplesOf,
-                    currencyDisplaySymbol, currencyNameCode);
+                    currencyDisplaySymbol, currencyNameCode, intCode);
 
             return CollateralData.instance(id, type, value, description, currencyData);
         }

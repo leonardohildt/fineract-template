@@ -35,9 +35,10 @@ public class CurrencyData implements Serializable {
     private final String nameCode;
     @SuppressWarnings("unused")
     private final String displayLabel;
+    private final Integer intCode;
 
     public static CurrencyData blank() {
-        return new CurrencyData("", "", 0, 0, "", "");
+        return new CurrencyData("", "", 0, 0, "", "", null);
     }
 
     public CurrencyData(String code) {
@@ -48,10 +49,11 @@ public class CurrencyData implements Serializable {
         this.displaySymbol = null;
         this.nameCode = null;
         this.displayLabel = null;
+        this.intCode = null;
     }
 
     public CurrencyData(final String code, final String name, final int decimalPlaces, final Integer inMultiplesOf,
-            final String displaySymbol, final String nameCode) {
+            final String displaySymbol, final String nameCode, final Integer intCode) {
         this.code = code;
         this.name = name;
         this.decimalPlaces = decimalPlaces;
@@ -59,6 +61,7 @@ public class CurrencyData implements Serializable {
         this.displaySymbol = displaySymbol;
         this.nameCode = nameCode;
         this.displayLabel = generateDisplayLabel();
+        this.intCode = intCode;
     }
 
     public CurrencyData(final String code, final int decimalPlaces, final Integer inMultiplesOf) {
@@ -69,6 +72,7 @@ public class CurrencyData implements Serializable {
         this.displaySymbol = null;
         this.nameCode = null;
         this.displayLabel = null;
+        this.intCode = null;
     }
 
     public String code() {
@@ -121,6 +125,10 @@ public class CurrencyData implements Serializable {
 
     public String getCode() {
         return this.code;
+    }
+
+    public Integer getIntCode() {
+        return intCode;
     }
 
     public int getDecimalPlaces() {

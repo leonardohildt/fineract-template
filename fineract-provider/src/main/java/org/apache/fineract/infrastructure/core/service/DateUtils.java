@@ -18,6 +18,7 @@
  */
 package org.apache.fineract.infrastructure.core.service;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -27,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import org.apache.fineract.infrastructure.core.data.ApiParameterError;
@@ -116,4 +118,22 @@ public final class DateUtils {
         return ThreadLocalContextUtil.getBusinessDate();
     }
 
+    public static Date localDateToDate(LocalDate localDate) {
+        final ZoneId zone = getDateTimeZoneOfTenant();
+        Date date = Date.from(localDate.atStartOfDay(zone).toInstant());
+        return date;
+    }
+
+    public static LocalDate dateToLocalDate(Date date) {
+        // Getting the default zone id
+        ZoneId defaultZoneId = getDateTimeZoneOfTenant();
+        // Converting the date to Instant
+        Instant instant = date.toInstant();
+
+        return instant.atZone(defaultZoneId).toLocalDate();
+    }
+
+    public static Date getDateOfTenant() {
+        return Date.from(getLocalDateOfTenant().atStartOfDay(getDateTimeZoneOfTenant()).toInstant());
+    }
 }

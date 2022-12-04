@@ -21,6 +21,7 @@ package org.apache.fineract.portfolio.account.service;
 import java.util.Collection;
 import org.apache.fineract.portfolio.account.data.AccountAssociationsData;
 import org.apache.fineract.portfolio.account.data.PortfolioAccountData;
+import org.apache.fineract.portfolio.cupo.data.CupoData;
 
 public interface AccountAssociationsReadPlatformService {
 
@@ -33,4 +34,6 @@ public interface AccountAssociationsReadPlatformService {
     Collection<AccountAssociationsData> retriveLoanAssociations(Long loanId, Integer associationType);
 
     PortfolioAccountData retriveSavingsAccount(Long savingsId);
+
+    CupoData retrieveLinkedCupo(Long cupoId);
 }

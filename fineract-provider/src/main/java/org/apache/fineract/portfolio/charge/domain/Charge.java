@@ -672,7 +672,7 @@ public class Charge extends AbstractPersistableCustom {
             paymentTypeData = PaymentTypeData.instance(paymentType.getId(), paymentType.getPaymentName());
         }
 
-        final CurrencyData currency = new CurrencyData(this.currencyCode, null, 0, 0, null, null);
+        final CurrencyData currency = new CurrencyData(this.currencyCode, null, 0, 0, null, null, 0);
         return ChargeData.instance(getId(), this.name, this.amount, currency, chargeTimeType, chargeAppliesTo, chargeCalculationType,
                 chargePaymentmode, getFeeOnMonthDay(), this.feeInterval, this.penalty, this.active, this.enableFreeWithdrawal,
                 this.freeWithdrawalFrequency, this.restartFrequency, this.restartFrequencyEnum, this.enablePaymentType, paymentTypeData,

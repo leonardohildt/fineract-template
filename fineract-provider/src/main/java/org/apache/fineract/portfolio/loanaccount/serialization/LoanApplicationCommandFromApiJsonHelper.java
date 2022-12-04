@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.fineract.infrastructure.core.data.ApiParameterError;
@@ -43,6 +44,7 @@ import org.apache.fineract.portfolio.accountdetails.domain.AccountType;
 import org.apache.fineract.portfolio.calendar.service.CalendarUtils;
 import org.apache.fineract.portfolio.collateralmanagement.domain.ClientCollateralManagement;
 import org.apache.fineract.portfolio.collateralmanagement.domain.ClientCollateralManagementRepositoryWrapper;
+import org.apache.fineract.portfolio.cupo.domain.Cupo;
 import org.apache.fineract.portfolio.loanaccount.api.LoanApiConstants;
 import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanCharge;
@@ -94,7 +96,8 @@ public final class LoanApplicationCommandFromApiJsonHelper {
             LoanApiConstants.datatables, LoanApiConstants.isEqualAmortizationParam, LoanProductConstants.RATES_PARAM_NAME,
             LoanApiConstants.applicationId, // glim specific
             LoanApiConstants.lastApplication, // glim specific
-            LoanApiConstants.daysInYearTypeParameterName, LoanApiConstants.fixedPrincipalPercentagePerInstallmentParamName));
+            LoanApiConstants.daysInYearTypeParameterName, LoanApiConstants.fixedPrincipalPercentagePerInstallmentParamName,
+            LoanApiConstants.cupoIdParameterName));
 
     private final FromJsonHelper fromApiJsonHelper;
     private final CalculateLoanScheduleQueryFromApiJsonHelper apiJsonHelper;
@@ -1130,6 +1133,102 @@ public final class LoanApplicationCommandFromApiJsonHelper {
                     savingsAccount.getId());
             dataValidationErrors.add(error);
         }
+        if (!dataValidationErrors.isEmpty()) {
+            throw new PlatformApiDataValidationException("validation.msg.validation.errors.exist", "Validation errors exist.",
+                    dataValidationErrors);
+        }
+    }
+
+    public void validatelinkedCupo(final Cupo cupo, final Loan loanApplication) {
+        final List<ApiParameterError> dataValidationErrors = new ArrayList<>();
+        if (!cupo.isActive()) {
+            final ApiParameterError error = ApiParameterError.parameterError("validation.msg.loan.linked.cupo.is.not.active",
+                    "Linked Cupo with id:" + cupo.getId() + " is not in active state", LoanApiConstants.cupoIdParameterName, cupo.getId());
+            dataValidationErrors.add(error);
+        } else if (Objects.nonNull(loanApplication.getClientId()) && Objects.nonNull(cupo.getClientId())
+                && !loanApplication.getClientId().equals(cupo.getClientId())) {
+            final ApiParameterError error = ApiParameterError.parameterError("validation.msg.loan.linked.cupo.not.belongs.to.same.client",
+                    "Linked Cupo with id:" + cupo.getId() + " is not belongs to the same client", LoanApiConstants.cupoIdParameterName,
+                    cupo.getId());
+            dataValidationErrors.add(error);
+        } else if (Objects.nonNull(loanApplication.getGroupId()) && Objects.nonNull(cupo.getGroupId())
+                && !loanApplication.getGroupId().equals(cupo.getGroupId())) {
+            final ApiParameterError error = ApiParameterError.parameterError("validation.msg.loan.linked.cupo.not.belongs.to.same.group",
+                    "Linked Cupo with id:" + cupo.getId() + " is not belongs to the same group", LoanApiConstants.cupoIdParameterName,
+                    cupo.getId());
+            dataValidationErrors.add(error);
+        }
+
+        if (!cupo.getCurrencyCode().equalsIgnoreCase(loanApplication.getCurrencyCode())) {
+            final String defaultUserMessage = "Loan currency should be the same as linked cupo.";
+            final ApiParameterError error = ApiParameterError.generalError("error.msg.loan.linked.cupo.not.same.currency",
+                    defaultUserMessage);
+            dataValidationErrors.add(error);
+        }
+
+        LocalDate expectedDisbursementDate = loanApplication.getExpectedDisbursedOnLocalDate();
+        if (!expectedDisbursementDate.isBefore(cupo.getExpirationDate())) {
+            final String defaultUserMessage = "Loan expected disbursement date can not be greater than expiration date in linked cupo.";
+            final ApiParameterError error = ApiParameterError.generalError("error.msg.loan.linked.cupo.expired", defaultUserMessage);
+            dataValidationErrors.add(error);
+        }
+
+        BigDecimal proposedPrincipal = loanApplication.getProposedPrincipal();
+        if (proposedPrincipal.compareTo(cupo.getAmountAvailable()) > 0) {
+            final String defaultUserMessage = "Loan Account amount is greater than amount available in linked cupo.";
+            final ApiParameterError error = ApiParameterError
+                    .generalError("error.msg.loan.linked.cupo.does.not.have.available.amount.for.this.loan", defaultUserMessage);
+            dataValidationErrors.add(error);
+        }
+
+        if (!dataValidationErrors.isEmpty()) {
+            throw new PlatformApiDataValidationException("validation.msg.validation.errors.exist", "Validation errors exist.",
+                    dataValidationErrors);
+        }
+    }
+
+    public void validatelinkedCupoAfterApproveLoan(final Cupo cupo, final Loan loanApplication) {
+        final List<ApiParameterError> dataValidationErrors = new ArrayList<>();
+        if (!cupo.isActive()) {
+            final ApiParameterError error = ApiParameterError.parameterError("validation.msg.loan.linked.cupo.is.not.active",
+                    "Linked Cupo with id:" + cupo.getId() + " is not in active state", LoanApiConstants.cupoIdParameterName, cupo.getId());
+            dataValidationErrors.add(error);
+        } else if (Objects.nonNull(loanApplication.getClientId()) && Objects.nonNull(cupo.getClientId())
+                && !loanApplication.getClientId().equals(cupo.getClientId())) {
+            final ApiParameterError error = ApiParameterError.parameterError("validation.msg.loan.linked.cupo.not.belongs.to.same.client",
+                    "Linked Cupo with id:" + cupo.getId() + " is not belongs to the same client", LoanApiConstants.cupoIdParameterName,
+                    cupo.getId());
+            dataValidationErrors.add(error);
+        } else if (Objects.nonNull(loanApplication.getGroupId()) && Objects.nonNull(cupo.getGroupId())
+                && !loanApplication.getGroupId().equals(cupo.getGroupId())) {
+            final ApiParameterError error = ApiParameterError.parameterError("validation.msg.loan.linked.cupo.not.belongs.to.same.group",
+                    "Linked Cupo with id:" + cupo.getId() + " is not belongs to the same group", LoanApiConstants.cupoIdParameterName,
+                    cupo.getId());
+            dataValidationErrors.add(error);
+        }
+
+        if (!cupo.getCurrencyCode().equalsIgnoreCase(loanApplication.getCurrencyCode())) {
+            final String defaultUserMessage = "Loan currency should be the same as linked cupo.";
+            final ApiParameterError error = ApiParameterError.generalError("error.msg.loan.linked.cupo.not.same.currency",
+                    defaultUserMessage);
+            dataValidationErrors.add(error);
+        }
+
+        LocalDate expectedDisbursementDate = loanApplication.getExpectedDisbursedOnLocalDate();
+        if (!expectedDisbursementDate.isBefore(cupo.getExpirationDate())) {
+            final String defaultUserMessage = "Loan expected disbursement date can not be greater than expiration date in linked cupo.";
+            final ApiParameterError error = ApiParameterError.generalError("error.msg.loan.linked.cupo.expired", defaultUserMessage);
+            dataValidationErrors.add(error);
+        }
+
+        BigDecimal approvedPrincipal = loanApplication.getApprovedPrincipal();
+        if (approvedPrincipal.compareTo(cupo.getAmountAvailable()) > 0) {
+            final String defaultUserMessage = "Loan Account amount is greater than amount available in linked cupo.";
+            final ApiParameterError error = ApiParameterError
+                    .generalError("error.msg.loan.linked.cupo.does.not.have.available.amount.for.this.loan", defaultUserMessage);
+            dataValidationErrors.add(error);
+        }
+
         if (!dataValidationErrors.isEmpty()) {
             throw new PlatformApiDataValidationException("validation.msg.validation.errors.exist", "Validation errors exist.",
                     dataValidationErrors);

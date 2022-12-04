@@ -114,9 +114,10 @@ public class SavingsAccountChargeReadPlatformServiceImpl implements SavingsAccou
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDecimalPlaces = JdbcSupport.getInteger(rs, "currencyDecimalPlaces");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
 
             final CurrencyData currency = new CurrencyData(currencyCode, currencyName, currencyDecimalPlaces, inMultiplesOf,
-                    currencyDisplaySymbol, currencyNameCode);
+                    currencyDisplaySymbol, currencyNameCode, intCode);
 
             final int chargeTime = rs.getInt("chargeTime");
             final EnumOptionData chargeTimeType = ChargeEnumerations.chargeTimeType(chargeTime);

@@ -100,6 +100,9 @@ import org.apache.fineract.portfolio.charge.service.ChargeReadPlatformService;
 import org.apache.fineract.portfolio.client.data.ClientData;
 import org.apache.fineract.portfolio.collateralmanagement.data.LoanCollateralResponseData;
 import org.apache.fineract.portfolio.collateralmanagement.service.LoanCollateralManagementReadPlatformService;
+import org.apache.fineract.portfolio.cupo.data.CupoData;
+import org.apache.fineract.portfolio.cupo.domain.CupoStatus;
+import org.apache.fineract.portfolio.cupo.service.CupoReadService;
 import org.apache.fineract.portfolio.floatingrates.data.InterestRatePeriodData;
 import org.apache.fineract.portfolio.fund.data.FundData;
 import org.apache.fineract.portfolio.fund.service.FundReadPlatformService;
@@ -259,6 +262,7 @@ public class LoansApiResource {
     private final DefaultToApiJsonSerializer<GlimRepaymentTemplate> glimTemplateToApiJsonSerializer;
     private final GLIMAccountInfoReadPlatformService glimAccountInfoReadPlatformService;
     private final LoanCollateralManagementReadPlatformService loanCollateralManagementReadPlatformService;
+    private final CupoReadService cupoReadService;
 
     public LoansApiResource(final PlatformSecurityContext context, final LoanReadPlatformService loanReadPlatformService,
             final LoanProductReadPlatformService loanProductReadPlatformService,
@@ -283,7 +287,8 @@ public class LoansApiResource {
             final ConfigurationDomainService configurationDomainService,
             final DefaultToApiJsonSerializer<GlimRepaymentTemplate> glimTemplateToApiJsonSerializer,
             final GLIMAccountInfoReadPlatformService glimAccountInfoReadPlatformService,
-            final LoanCollateralManagementReadPlatformService loanCollateralManagementReadPlatformService) {
+            final LoanCollateralManagementReadPlatformService loanCollateralManagementReadPlatformService,
+            final CupoReadService cupoReadService) {
         this.context = context;
         this.loanReadPlatformService = loanReadPlatformService;
         this.loanProductReadPlatformService = loanProductReadPlatformService;
@@ -315,6 +320,7 @@ public class LoansApiResource {
         this.glimTemplateToApiJsonSerializer = glimTemplateToApiJsonSerializer;
         this.glimAccountInfoReadPlatformService = glimAccountInfoReadPlatformService;
         this.loanCollateralManagementReadPlatformService = loanCollateralManagementReadPlatformService;
+        this.cupoReadService = cupoReadService;
     }
 
     /*
@@ -461,6 +467,14 @@ public class LoansApiResource {
                 .retrieveTemplates(StatusEnum.CREATE.getCode().longValue(), EntityTables.LOAN.getName(), productId);
         newLoanAccount.setDatatables(datatableTemplates);
 
+        if (clientId != null && newLoanAccount.currency() != null) {
+            newLoanAccount.setCupoLinkingOptions(
+                    this.cupoReadService.findAllActiveCuposByClientId(clientId, CupoStatus.ACTIVE, newLoanAccount.currency().code()));
+        } else if (groupId != null && newLoanAccount.currency() != null) {
+            newLoanAccount.setCupoLinkingOptions(
+                    this.cupoReadService.findAllActiveCuposByGroupId(groupId, CupoStatus.ACTIVE, newLoanAccount.currency().code()));
+        }
+
         final ApiRequestJsonSerializationSettings settings = this.apiRequestParameterHelper.process(uriInfo.getQueryParameters());
         return this.toApiJsonSerializer.serialize(settings, newLoanAccount, this.loanDataParameters);
     }
@@ -540,6 +554,7 @@ public class LoansApiResource {
         CalendarData meeting = null;
         Collection<NoteData> notes = null;
         PortfolioAccountData linkedAccount = null;
+        CupoData linkedCupo = this.accountAssociationsReadPlatformService.retrieveLinkedCupo(loanId);
         Collection<DisbursementData> disbursementData = null;
         Collection<LoanTermVariationsData> emiAmountVariations = null;
         Collection<LoanCollateralResponseData> loanCollateralManagements = null;
@@ -676,6 +691,7 @@ public class LoansApiResource {
         Collection<PortfolioAccountData> accountLinkingOptions = null;
         PaidInAdvanceData paidInAdvanceTemplate = null;
         Collection<LoanAccountSummaryData> clientActiveLoanOptions = null;
+        Collection<CupoData> cupoLinkingOptions = null;
 
         final boolean template = ApiParameterHelper.template(uriInfo.getQueryParameters());
         if (template) {
@@ -735,6 +751,13 @@ public class LoansApiResource {
                         .retrieveClientActiveLoanAccountSummary(loanBasicDetails.clientId());
             }
 
+            if (loanBasicDetails.clientId() != null) {
+                cupoLinkingOptions = this.cupoReadService.findAllActiveCuposByClientId(loanBasicDetails.clientId(), CupoStatus.ACTIVE,
+                        loanBasicDetails.currency().code());
+            } else if (loanBasicDetails.groupId() != null) {
+                cupoLinkingOptions = this.cupoReadService.findAllActiveCuposByGroupId(loanBasicDetails.groupId(), CupoStatus.ACTIVE,
+                        loanBasicDetails.currency().code());
+            }
         }
 
         Collection<ChargeData> overdueCharges = this.chargeReadPlatformService.retrieveLoanProductCharges(loanBasicDetails.loanProductId(),
@@ -757,6 +780,8 @@ public class LoansApiResource {
                 loanCollateralOptions, calendarOptions, notes, accountLinkingOptions, linkedAccount, disbursementData, emiAmountVariations,
                 overdueCharges, paidInAdvanceTemplate, interestRatesPeriods, clientActiveLoanOptions, rates, isRatesEnabled,
                 collectionData);
+        loanAccount.setLinkedCupo(linkedCupo);
+        loanAccount.setCupoLinkingOptions(cupoLinkingOptions);
 
         final ApiRequestJsonSerializationSettings settings = this.apiRequestParameterHelper.process(uriInfo.getQueryParameters(),
                 mandatoryResponseParameters);

@@ -619,7 +619,7 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
                     + " lps.name as transactionStrategyName, "
                     + " l.currency_code as currencyCode, l.currency_digits as currencyDigits, l.currency_multiplesof as inMultiplesOf, rc."
                     + sqlGenerator.escape("name")
-                    + " as currencyName, rc.display_symbol as currencyDisplaySymbol, rc.internationalized_name_code as currencyNameCode, "
+                    + " as currencyName, rc.display_symbol as currencyDisplaySymbol, rc.internationalized_name_code as currencyNameCode, rc.int_code as intCode, "
                     + " l.loan_officer_id as loanOfficerId, s.display_name as loanOfficerName, "
                     + " l.principal_disbursed_derived as principalDisbursed," + " l.principal_repaid_derived as principalPaid,"
                     + " l.principal_writtenoff_derived as principalWrittenOff,"
@@ -698,8 +698,9 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final CurrencyData currencyData = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf,
-                    currencyDisplaySymbol, currencyNameCode);
+                    currencyDisplaySymbol, currencyNameCode, intCode);
 
             final Long id = rs.getLong("id");
             final String accountNo = rs.getString("accountNo");
@@ -1298,7 +1299,7 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
                     + " pd.receipt_number as receiptNumber, pd.bank_number as bankNumber,pd.routing_code as routingCode, l.net_disbursal_amount as netDisbursalAmount,"
                     + " l.currency_code as currencyCode, l.currency_digits as currencyDigits, l.currency_multiplesof as inMultiplesOf, rc."
                     + sqlGenerator.escape("name") + " as currencyName, "
-                    + " rc.display_symbol as currencyDisplaySymbol, rc.internationalized_name_code as currencyNameCode, "
+                    + " rc.display_symbol as currencyDisplaySymbol, rc.internationalized_name_code as currencyNameCode, rc.int_code as intCode, "
                     + " pt.value as paymentTypeName, tr.external_id as externalId, tr.office_id as officeId, office.name as officeName, "
                     + " fromtran.id as fromTransferId, fromtran.is_reversed as fromTransferReversed,"
                     + " fromtran.transaction_date as fromTransferDate, fromtran.amount as fromTransferAmount,"
@@ -1322,8 +1323,9 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final CurrencyData currencyData = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf,
-                    currencyDisplaySymbol, currencyNameCode);
+                    currencyDisplaySymbol, currencyNameCode, intCode);
 
             final Long id = rs.getLong("id");
             final Long officeId = rs.getLong("officeId");
@@ -1740,8 +1742,9 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final CurrencyData currencyData = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf,
-                    currencyDisplaySymbol, currencyNameCode);
+                    currencyDisplaySymbol, currencyNameCode, intCode);
 
             return new LoanScheduleAccrualData(loanId, officeId, installmentNumber, accruedTill, frequency, repayEvery, dueDate, fromDate,
                     repaymentScheduleId, loanProductId, interestIncome, feeIncome, penaltyIncome, accruedInterestIncome, accruedFeeIncome,
@@ -1794,8 +1797,9 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final CurrencyData currencyData = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf,
-                    currencyDisplaySymbol, currencyNameCode);
+                    currencyDisplaySymbol, currencyNameCode, intCode);
             final LocalDate accruedTill = null;
             final PeriodFrequencyType frequency = null;
             final Integer repayEvery = null;
@@ -2229,7 +2233,9 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService {
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
-            return new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol, currencyNameCode);
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
+            return new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol, currencyNameCode,
+                    intCode);
         }
 
     }
