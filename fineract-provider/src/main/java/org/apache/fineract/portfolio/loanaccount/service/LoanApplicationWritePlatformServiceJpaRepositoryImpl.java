@@ -90,6 +90,8 @@ import org.apache.fineract.portfolio.collateralmanagement.domain.ClientCollatera
 import org.apache.fineract.portfolio.collateralmanagement.domain.ClientCollateralManagementRepository;
 import org.apache.fineract.portfolio.collateralmanagement.service.LoanCollateralAssembler;
 import org.apache.fineract.portfolio.common.domain.PeriodFrequencyType;
+import org.apache.fineract.portfolio.cupo.domain.Cupo;
+import org.apache.fineract.portfolio.cupo.domain.CupoRepositoryWrapper;
 import org.apache.fineract.portfolio.fund.domain.Fund;
 import org.apache.fineract.portfolio.group.domain.Group;
 import org.apache.fineract.portfolio.group.domain.GroupRepositoryWrapper;
@@ -201,6 +203,7 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
     private final GSIMReadPlatformService gsimReadPlatformService;
     private final LoanCollateralManagementRepository loanCollateralManagementRepository;
     private final ClientCollateralManagementRepository clientCollateralManagementRepository;
+    private final CupoRepositoryWrapper cupoRepositoryWrapper;
 
     @Autowired
     public LoanApplicationWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context, final FromJsonHelper fromJsonHelper,
@@ -229,7 +232,8 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             final LoanRepository loanRepository, final GSIMReadPlatformService gsimReadPlatformService, final RateAssembler rateAssembler,
             final LoanProductReadPlatformService loanProductReadPlatformService,
             final LoanCollateralManagementRepository loanCollateralManagementRepository,
-            final ClientCollateralManagementRepository clientCollateralManagementRepository) {
+            final ClientCollateralManagementRepository clientCollateralManagementRepository,
+            final CupoRepositoryWrapper cupoRepositoryWrapper) {
         this.context = context;
         this.fromJsonHelper = fromJsonHelper;
         this.loanApplicationTransitionApiJsonValidator = loanApplicationTransitionApiJsonValidator;
@@ -272,6 +276,7 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
         this.gsimReadPlatformService = gsimReadPlatformService;
         this.loanCollateralManagementRepository = loanCollateralManagementRepository;
         this.clientCollateralManagementRepository = clientCollateralManagementRepository;
+        this.cupoRepositoryWrapper = cupoRepositoryWrapper;
     }
 
     private LoanLifecycleStateMachine defaultLoanLifecycleStateMachine() {
@@ -544,8 +549,8 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
 
             // Save linked account information
             SavingsAccount savingsAccount;
+            AccountAssociations accountAssociations = null;
             final boolean backdatedTxnsAllowedTill = false;
-            AccountAssociations accountAssociations;
             final Long savingsAccountId = command.longValueOfParameterNamed("linkAccountId");
             if (savingsAccountId != null) {
                 if (newLoanApplication.getLoanType() == 4) {
@@ -587,6 +592,21 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
 
                 }
             }
+
+            // Cupo Link
+            final Long cupoId = command.longValueOfParameterNamed(LoanApiConstants.cupoIdParameterName);
+            if (cupoId != null) {
+                Cupo cupo = this.cupoRepositoryWrapper.findOneWithNotFoundDetection(cupoId);
+                this.fromApiJsonDeserializer.validatelinkedCupo(cupo, newLoanApplication);
+                if (accountAssociations == null) {
+                    accountAssociations = AccountAssociations.associateCupo(newLoanApplication, cupo,
+                            AccountAssociationType.LINKED_ACCOUNT_ASSOCIATION.getValue(), true);
+                } else {
+                    accountAssociations.updateLinkedCupo(cupo);
+                }
+                this.accountAssociationsRepository.save(accountAssociations);
+            }
+
             if (command.parameterExists(LoanApiConstants.datatables)) {
                 this.entityDatatableChecksWritePlatformService.saveDatatables(StatusEnum.CREATE.getCode().longValue(),
                         EntityTables.LOAN.getName(), newLoanApplication.getId(), newLoanApplication.productId(),
@@ -1178,7 +1198,12 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             if (savingsAccountId == null) {
                 if (accountAssociations != null) {
                     if (this.fromJsonHelper.parameterExists(linkAccountIdParamName, command.parsedJson())) {
-                        this.accountAssociationsRepository.delete(accountAssociations);
+                        if (accountAssociations.linkedCupo() != null) {
+                            accountAssociations.updateLinkedSavingsAccount(null);
+                            this.accountAssociationsRepository.save(accountAssociations);
+                        } else {
+                            this.accountAssociationsRepository.delete(accountAssociations);
+                        }
                         changes.put(linkAccountIdParamName, null);
                     } else {
                         isLinkedAccPresent = true;
@@ -1219,6 +1244,33 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                         throw new LinkedAccountRequiredException("loanCharge", errorMessage);
                     }
                 }
+            }
+
+            final Long cupoId = command.longValueOfParameterNamed(LoanApiConstants.cupoIdParameterName);
+            if (cupoId == null) {
+                if (accountAssociations != null) {
+                    if (this.fromJsonHelper.parameterExists(LoanApiConstants.cupoIdParameterName, command.parsedJson())) {
+                        if (accountAssociations.linkedSavingsAccount() != null) {
+                            accountAssociations.updateLinkedCupo(null);
+                            this.accountAssociationsRepository.save(accountAssociations);
+                        } else {
+                            this.accountAssociationsRepository.delete(accountAssociations);
+                        }
+                        changes.put(linkAccountIdParamName, null);
+                    }
+                }
+            } else {
+                final Cupo cupo = this.cupoRepositoryWrapper.findOneWithNotFoundDetection(cupoId);
+                this.fromApiJsonDeserializer.validatelinkedCupo(cupo, existingLoanApplication);
+                if (accountAssociations == null) {
+                    boolean isActive = true;
+                    accountAssociations = AccountAssociations.associateCupo(existingLoanApplication, cupo,
+                            AccountAssociationType.LINKED_ACCOUNT_ASSOCIATION.getValue(), isActive);
+                } else {
+                    accountAssociations.updateLinkedCupo(cupo);
+                }
+                changes.put(LoanApiConstants.cupoIdParameterName, cupoId);
+                this.accountAssociationsRepository.save(accountAssociations);
             }
 
             if ((command.longValueOfParameterNamed(productIdParamName) != null)

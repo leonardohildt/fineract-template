@@ -451,6 +451,10 @@ public class LoanTransaction extends AbstractAuditableWithUTCDateTimeCustom {
         return Money.of(currency, this.amount);
     }
 
+    public BigDecimal getAmount() {
+        return this.amount;
+    }
+
     public LocalDate getTransactionDate() {
         return this.dateOf;
     }

@@ -32,6 +32,8 @@ public interface ClientReadPlatformService {
 
     ClientData retrieveOne(Long clientId);
 
+    ClientData retrieveOneLookup(Long clientId);
+
     Collection<ClientData> retrieveAllForLookup(String extraCriteria);
 
     Collection<ClientData> retrieveAllForLookupByOfficeId(Long officeId);

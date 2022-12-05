@@ -47,6 +47,9 @@ public class ApplicationCurrency extends AbstractPersistableCustom {
     @Column(name = "display_symbol", nullable = true, length = 10)
     private String displaySymbol;
 
+    @Column(name = "int_code")
+    private Integer intCode;
+
     protected ApplicationCurrency() {
         this.code = null;
         this.name = null;
@@ -54,21 +57,23 @@ public class ApplicationCurrency extends AbstractPersistableCustom {
         this.inMultiplesOf = null;
         this.nameCode = null;
         this.displaySymbol = null;
+        this.intCode = null;
     }
 
     public static ApplicationCurrency from(final ApplicationCurrency currency, final int decimalPlaces, final Integer inMultiplesOf) {
         return new ApplicationCurrency(currency.code, currency.name, decimalPlaces, inMultiplesOf, currency.nameCode,
-                currency.displaySymbol);
+                currency.displaySymbol, currency.intCode);
     }
 
     private ApplicationCurrency(final String code, final String name, final int decimalPlaces, final Integer inMultiplesOf,
-            final String nameCode, final String displaySymbol) {
+            final String nameCode, final String displaySymbol, final Integer intCode) {
         this.code = code;
         this.name = name;
         this.decimalPlaces = decimalPlaces;
         this.inMultiplesOf = inMultiplesOf;
         this.nameCode = nameCode;
         this.displaySymbol = displaySymbol;
+        this.intCode = intCode;
     }
 
     public String getCode() {
@@ -95,12 +100,18 @@ public class ApplicationCurrency extends AbstractPersistableCustom {
         return this.displaySymbol;
     }
 
+    public Integer getIntCode() {
+        return intCode;
+    }
+
     public CurrencyData toData() {
-        return new CurrencyData(this.code, this.name, this.decimalPlaces, this.inMultiplesOf, this.displaySymbol, this.nameCode);
+        return new CurrencyData(this.code, this.name, this.decimalPlaces, this.inMultiplesOf, this.displaySymbol, this.nameCode,
+                this.intCode);
     }
 
     public CurrencyData toData(final int digitsAfterDecimalSupported, final Integer inMultiplesOf) {
-        return new CurrencyData(this.code, this.name, digitsAfterDecimalSupported, inMultiplesOf, this.displaySymbol, this.nameCode);
+        return new CurrencyData(this.code, this.name, digitsAfterDecimalSupported, inMultiplesOf, this.displaySymbol, this.nameCode,
+                this.intCode);
     }
 
     public OrganisationCurrency toOrganisationCurrency() {

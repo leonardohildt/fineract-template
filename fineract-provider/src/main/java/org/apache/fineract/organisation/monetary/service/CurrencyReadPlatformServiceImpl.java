@@ -80,12 +80,13 @@ public class CurrencyReadPlatformServiceImpl implements CurrencyReadPlatformServ
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
             final String displaySymbol = rs.getString("displaySymbol");
             final String nameCode = rs.getString("nameCode");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
 
-            return new CurrencyData(code, name, decimalPlaces, inMultiplesOf, displaySymbol, nameCode);
+            return new CurrencyData(code, name, decimalPlaces, inMultiplesOf, displaySymbol, nameCode, intCode);
         }
 
         public String schema() {
-            return " c.code as code, c.name as name, c.decimal_places as decimalPlaces,c.currency_multiplesof as inMultiplesOf, c.display_symbol as displaySymbol, c.internationalized_name_code as nameCode ";
+            return " c.code as code, c.name as name, c.decimal_places as decimalPlaces,c.currency_multiplesof as inMultiplesOf, c.display_symbol as displaySymbol, c.internationalized_name_code as nameCode, c.int_code as intCode ";
         }
     }
 }

@@ -28,6 +28,8 @@ import org.apache.fineract.infrastructure.core.domain.JdbcSupport;
 import org.apache.fineract.portfolio.account.data.AccountAssociationsData;
 import org.apache.fineract.portfolio.account.data.PortfolioAccountData;
 import org.apache.fineract.portfolio.account.domain.AccountAssociationType;
+import org.apache.fineract.portfolio.cupo.data.CupoData;
+import org.apache.fineract.portfolio.cupo.service.CupoReadService;
 import org.apache.fineract.portfolio.loanaccount.domain.LoanStatus;
 import org.apache.fineract.portfolio.savings.domain.SavingsAccountStatusType;
 import org.slf4j.Logger;
@@ -43,6 +45,7 @@ public class AccountAssociationsReadPlatformServiceImpl implements AccountAssoci
 
     private static final Logger LOG = LoggerFactory.getLogger(AccountAssociationsReadPlatformServiceImpl.class);
     private final JdbcTemplate jdbcTemplate;
+    private final CupoReadService cupoReadService;
 
     @Override
     public PortfolioAccountData retriveLoanLinkedAssociation(final Long loanId) {
@@ -192,5 +195,20 @@ public class AccountAssociationsReadPlatformServiceImpl implements AccountAssoci
     public PortfolioAccountData retriveSavingsAccount(final Long savingsId) {
         String accountNo = jdbcTemplate.queryForObject("select account_no from m_savings_account where id = ?", String.class, savingsId);
         return PortfolioAccountData.lookup(savingsId, accountNo);
+    }
+
+    @Override
+    public CupoData retrieveLinkedCupo(Long loanId) {
+        Long cupoId = null;
+        try {
+            cupoId = jdbcTemplate.queryForObject("select linked_cupo_id from m_portfolio_account_associations where loan_account_id = ?",
+                    Long.class, loanId);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        if (cupoId != null) {
+            return this.cupoReadService.findById(cupoId);
+        }
+        return null;
     }
 }

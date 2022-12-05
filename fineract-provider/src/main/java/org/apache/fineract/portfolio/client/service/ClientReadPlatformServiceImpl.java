@@ -325,6 +325,13 @@ public class ClientReadPlatformServiceImpl implements ClientReadPlatformService 
     }
 
     @Override
+    public ClientData retrieveOneLookup(Long clientId) {
+        String sql = "select " + this.lookupMapper.schema();
+        sql += " where c.id = ?";
+        return this.jdbcTemplate.queryForObject(sql, this.lookupMapper, new Object[] { clientId });
+    }
+
+    @Override
     public Collection<ClientData> retrieveAllForLookup(final String extraCriteria) {
 
         String sql = "select " + this.lookupMapper.schema();

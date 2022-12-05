@@ -138,7 +138,7 @@ public class ShareAccountWritePlatformServiceJpaRepositoryImpl implements ShareA
         accountingBridgeData.put("officeId", account.getOfficeId());
         MonetaryCurrency currency = account.getCurrency();
         final CurrencyData currencyData = new CurrencyData(currency.getCode(), "", currency.getDigitsAfterDecimal(),
-                currency.getCurrencyInMultiplesOf(), "", "");
+                currency.getCurrencyInMultiplesOf(), "", "", 0);
         accountingBridgeData.put("currency", currencyData);
         final List<Map<String, Object>> newTransactionsMap = new ArrayList<>();
         accountingBridgeData.put("newTransactions", newTransactionsMap);

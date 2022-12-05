@@ -20,10 +20,12 @@ package org.apache.fineract.portfolio.account.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.apache.fineract.infrastructure.core.domain.AbstractPersistableCustom;
+import org.apache.fineract.portfolio.cupo.domain.Cupo;
 import org.apache.fineract.portfolio.loanaccount.domain.Loan;
 import org.apache.fineract.portfolio.savings.domain.SavingsAccount;
 
@@ -47,6 +49,10 @@ public class AccountAssociations extends AbstractPersistableCustom {
     @JoinColumn(name = "linked_savings_account_id", nullable = true)
     private SavingsAccount linkedSavingsAccount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "linked_cupo_id", nullable = true)
+    private Cupo linkedCupo;
+
     @Column(name = "association_type_enum", nullable = false)
     private Integer associationType;
 
@@ -56,23 +62,29 @@ public class AccountAssociations extends AbstractPersistableCustom {
     protected AccountAssociations() {}
 
     private AccountAssociations(final Loan loanAccount, final SavingsAccount savingsAccount, final Loan linkedLoanAccount,
-            final SavingsAccount linkedSavingsAccount, final Integer associationType, boolean active) {
+            final SavingsAccount linkedSavingsAccount, final Integer associationType, boolean active, final Cupo linkedCupo) {
         this.loanAccount = loanAccount;
         this.savingsAccount = savingsAccount;
         this.linkedLoanAccount = linkedLoanAccount;
         this.linkedSavingsAccount = linkedSavingsAccount;
         this.associationType = associationType;
         this.active = active;
+        this.linkedCupo = linkedCupo;
     }
 
     public static AccountAssociations associateSavingsAccount(final Loan loan, final SavingsAccount savingsAccount,
             final Integer associationType, boolean isActive) {
-        return new AccountAssociations(loan, null, null, savingsAccount, associationType, isActive);
+        return new AccountAssociations(loan, null, null, savingsAccount, associationType, isActive, null);
     }
 
     public static AccountAssociations associateSavingsAccount(final SavingsAccount savingsAccount,
             final SavingsAccount linkedSavingsAccount, final Integer associationType, boolean isActive) {
-        return new AccountAssociations(null, savingsAccount, null, linkedSavingsAccount, associationType, isActive);
+        return new AccountAssociations(null, savingsAccount, null, linkedSavingsAccount, associationType, isActive, null);
+    }
+
+    public static AccountAssociations associateCupo(final Loan loan, final Cupo linkedCupo, final Integer associationType,
+            boolean isActive) {
+        return new AccountAssociations(loan, null, null, null, associationType, isActive, linkedCupo);
     }
 
     public SavingsAccount linkedSavingsAccount() {
@@ -81,5 +93,13 @@ public class AccountAssociations extends AbstractPersistableCustom {
 
     public void updateLinkedSavingsAccount(final SavingsAccount savingsAccount) {
         this.linkedSavingsAccount = savingsAccount;
+    }
+
+    public Cupo linkedCupo() {
+        return this.linkedCupo;
+    }
+
+    public void updateLinkedCupo(final Cupo cupo) {
+        this.linkedCupo = cupo;
     }
 }

@@ -569,4 +569,17 @@ public final class SearchParameters {
         return new SearchParameters(null, null, null, null, null, null, null, offset, maxLimitAllowed, orderBy, sortOrder, null, null, null,
                 null, null, false);
     }
+
+    public static SearchParameters forExchanges(Integer offset, Integer limit, String orderBy, String sortOrder) {
+        final String externalId = null;
+        final Integer maxLimitAllowed = getCheckedLimit(limit);
+        final Long staffId = null;
+        final String accountNo = null;
+        final Long loanId = null;
+        final Long savingsId = null;
+        final Boolean orphansOnly = false;
+        final boolean isSelfUser = false;
+        return new SearchParameters(null, null, externalId, null, null, null, null, offset, maxLimitAllowed, orderBy, sortOrder, staffId,
+                accountNo, loanId, savingsId, orphansOnly, isSelfUser);
+    }
 }

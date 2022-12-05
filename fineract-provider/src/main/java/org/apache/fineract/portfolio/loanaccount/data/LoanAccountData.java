@@ -38,6 +38,7 @@ import org.apache.fineract.portfolio.accountdetails.data.LoanAccountSummaryData;
 import org.apache.fineract.portfolio.calendar.data.CalendarData;
 import org.apache.fineract.portfolio.charge.data.ChargeData;
 import org.apache.fineract.portfolio.common.domain.PeriodFrequencyType;
+import org.apache.fineract.portfolio.cupo.data.CupoData;
 import org.apache.fineract.portfolio.floatingrates.data.InterestRatePeriodData;
 import org.apache.fineract.portfolio.fund.data.FundData;
 import org.apache.fineract.portfolio.group.data.GroupGeneralData;
@@ -171,6 +172,8 @@ public final class LoanAccountData {
     // linkable account details
     private final PortfolioAccountData linkedAccount;
     private final Collection<PortfolioAccountData> accountLinkingOptions;
+    private CupoData linkedCupo;
+    private Collection<CupoData> cupoLinkingOptions;
 
     private final Boolean multiDisburseLoan;
 
@@ -1953,4 +1956,11 @@ public final class LoanAccountData {
         return this.status.value();
     }
 
+    public void setCupoLinkingOptions(Collection<CupoData> cupoLinkingOptions) {
+        this.cupoLinkingOptions = cupoLinkingOptions;
+    }
+
+    public void setLinkedCupo(CupoData linkedCupo) {
+        this.linkedCupo = linkedCupo;
+    }
 }

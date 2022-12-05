@@ -251,6 +251,13 @@ public class GroupReadPlatformServiceImpl implements GroupReadPlatformService {
     }
 
     @Override
+    public GroupGeneralData retrieveOneLookup(Long groupId) {
+        final GroupLookupDataMapper rm = new GroupLookupDataMapper();
+        final String sql = "Select " + rm.schema() + " and g.id = ?";
+        return this.jdbcTemplate.queryForObject(sql, rm, new Object[] { groupId });
+    }
+
+    @Override
     public Collection<GroupGeneralData> retrieveGroupsForLookup(final Long officeId) {
         this.context.authenticatedUser();
         final GroupLookupDataMapper rm = new GroupLookupDataMapper();

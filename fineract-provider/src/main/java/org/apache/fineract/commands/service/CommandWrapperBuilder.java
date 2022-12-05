@@ -1887,6 +1887,30 @@ public class CommandWrapperBuilder {
         return this;
     }
 
+    public CommandWrapperBuilder createExchange() {
+        this.actionName = "CREATE";
+        this.entityName = "EXCHANGE";
+        this.href = "/exchanges/template";
+        return this;
+    }
+
+    public CommandWrapperBuilder updateExchange(final Long exchangeId) {
+        this.actionName = "UPDATE";
+        this.entityName = "EXCHANGE";
+        this.entityId = exchangeId;
+        this.href = "/exchanges/" + exchangeId;
+        return this;
+    }
+
+    public CommandWrapperBuilder deleteExchange(final Long exchangeId) {
+        this.actionName = "DELETE";
+        this.entityName = "EXCHANGE";
+        this.entityId = exchangeId;
+        this.groupId = exchangeId;
+        this.href = "/exchanges/" + exchangeId;
+        return this;
+    }
+
     public CommandWrapperBuilder createCollateral(final Long loanId) {
         this.actionName = "CREATE";
         this.entityName = "COLLATERAL";
@@ -3485,4 +3509,58 @@ public class CommandWrapperBuilder {
         return this;
     }
 
+    public CommandWrapperBuilder createCupo() {
+        this.actionName = "CREATE";
+        this.entityName = "CUPO";
+        this.href = "/cupos";
+        return this;
+    }
+
+    public CommandWrapperBuilder updateCupo(Long cupoId) {
+        this.actionName = "UPDATE";
+        this.entityName = "CUPO";
+        this.href = "/cupos/" + cupoId;
+        this.entityId = cupoId;
+        return this;
+    }
+
+    public CommandWrapperBuilder approveCupo(Long cupoId) {
+        this.actionName = "APPROVE";
+        this.entityName = "CUPO";
+        this.href = "/cupos/" + cupoId;
+        this.entityId = cupoId;
+        return this;
+    }
+
+    public CommandWrapperBuilder rejectCupo(Long cupoId) {
+        this.actionName = "REJECT";
+        this.entityName = "CUPO";
+        this.href = "/cupos/" + cupoId;
+        this.entityId = cupoId;
+        return this;
+    }
+
+    public CommandWrapperBuilder extensionCupo(Long cupoId) {
+        this.actionName = "EXTENSION";
+        this.entityName = "CUPO";
+        this.href = "/cupos/" + cupoId;
+        this.entityId = cupoId;
+        return this;
+    }
+
+    public CommandWrapperBuilder cancelCupo(Long cupoId) {
+        this.actionName = "CANCEL";
+        this.entityName = "CUPO";
+        this.href = "/cupos/" + cupoId;
+        this.entityId = cupoId;
+        return this;
+    }
+
+    public CommandWrapperBuilder reductionCupo(Long cupoId) {
+        this.actionName = "REDUCTION";
+        this.entityName = "CUPO";
+        this.href = "/cupos/" + cupoId;
+        this.entityId = cupoId;
+        return this;
+    }
 }

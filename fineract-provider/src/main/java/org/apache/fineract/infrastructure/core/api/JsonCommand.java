@@ -30,12 +30,14 @@ import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.fineract.infrastructure.core.serialization.FromJsonHelper;
+import org.apache.fineract.infrastructure.core.service.DateUtils;
 import org.apache.fineract.infrastructure.security.domain.BasicPasswordEncodablePlatformUser;
 import org.apache.fineract.infrastructure.security.domain.PlatformUser;
 import org.apache.fineract.infrastructure.security.service.PlatformPasswordEncoder;
@@ -418,6 +420,14 @@ public final class JsonCommand {
         return this.fromApiJsonHelper.extractLocalDateNamed(parameterName, this.parsedCommand);
     }
 
+    public Date dateValueOfParameterNamed2(final String parameterName) {
+        final LocalDate localDate = this.fromApiJsonHelper.extractLocalDateNamed(parameterName, this.parsedCommand);
+        if (localDate == null) {
+            return null;
+        }
+        return Date.from(localDate.atStartOfDay(DateUtils.getDateTimeZoneOfTenant()).toInstant());
+    }
+
     public boolean isChangeInStringParameterNamed(final String parameterName, final String existingValue) {
         boolean isChanged = false;
         if (parameterExists(parameterName)) {
@@ -648,4 +658,27 @@ public final class JsonCommand {
         this.fromApiJsonHelper.checkForUnsupportedParameters(typeOfMap, json, requestDataParameters);
     }
 
+    public boolean isChangeInDateParameterNamed(final String parameterName, final Date existingValue) {
+        LocalDate localDate = null;
+        if (existingValue != null) {
+            localDate = LocalDate.ofInstant(existingValue.toInstant(), DateUtils.getDateTimeZoneOfTenant());
+        }
+        return isChangeInLocalDateParameterNamed(parameterName, localDate);
+    }
+
+    public Long getResourceId() {
+        return resourceId;
+    }
+
+    private boolean differenceExists(final LocalDate baseValue, final LocalDate workingCopyValue) {
+        boolean differenceExists = false;
+
+        if (baseValue != null) {
+            differenceExists = !baseValue.equals(workingCopyValue);
+        } else {
+            differenceExists = workingCopyValue != null;
+        }
+
+        return differenceExists;
+    }
 }

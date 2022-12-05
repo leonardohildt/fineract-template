@@ -295,10 +295,11 @@ public class CollectionSheetReadPlatformServiceImpl implements CollectionSheetRe
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             CurrencyData currencyData = null;
             if (currencyCode != null) {
                 currencyData = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol,
-                        currencyNameCode);
+                        currencyNameCode, intCode);
             }
 
             final BigDecimal disbursementAmount = rs.getBigDecimal("disbursementAmount");
@@ -663,10 +664,11 @@ public class CollectionSheetReadPlatformServiceImpl implements CollectionSheetRe
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             final String depositAccountType = rs.getString("depositAccountType");
             // currency
             final CurrencyData currency = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol,
-                    currencyNameCode);
+                    currencyNameCode, intCode);
 
             return SavingsDueData.instance(savingsId, accountId, accountStatusId, productName, productId, currency, dueAmount,
                     depositAccountType);
@@ -787,10 +789,11 @@ public class CollectionSheetReadPlatformServiceImpl implements CollectionSheetRe
             final String currencyDisplaySymbol = rs.getString("currencyDisplaySymbol");
             final Integer currencyDigits = JdbcSupport.getInteger(rs, "currencyDigits");
             final Integer inMultiplesOf = JdbcSupport.getInteger(rs, "inMultiplesOf");
+            final Integer intCode = JdbcSupport.getInteger(rs, "intCode");
             CurrencyData currencyData = null;
             if (currencyCode != null) {
                 currencyData = new CurrencyData(currencyCode, currencyName, currencyDigits, inMultiplesOf, currencyDisplaySymbol,
-                        currencyNameCode);
+                        currencyNameCode, intCode);
             }
 
             final BigDecimal disbursementAmount = rs.getBigDecimal("disbursementAmount");

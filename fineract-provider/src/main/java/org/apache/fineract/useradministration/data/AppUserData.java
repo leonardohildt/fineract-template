@@ -141,6 +141,10 @@ public final class AppUserData {
         return this.username;
     }
 
+    public Long getId() {
+        return this.id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

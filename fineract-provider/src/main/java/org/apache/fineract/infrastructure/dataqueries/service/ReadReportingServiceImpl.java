@@ -215,6 +215,7 @@ public class ReadReportingServiceImpl implements ReadReportingService {
         if (rs.next() && rs.getString("the_sql") != null) {
             return rs.getString("the_sql");
         }
+
         throw new ReportNotFoundException(encodedName);
     }
 
@@ -233,6 +234,7 @@ public class ReadReportingServiceImpl implements ReadReportingService {
         if (rs.next()) {
             return rs.getString("report_type");
         }
+
         throw new ReportNotFoundException(reportName);
     }
 
