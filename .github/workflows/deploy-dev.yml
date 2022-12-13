@@ -50,7 +50,6 @@ jobs:
           key: ${{ secrets.LATAM_EC2_SSH_KEY }}
           script: |
             ./docker-login.sh
-            docker stop fineract
-            docker rm fineract
-            docker pull 916148231619.dkr.ecr.us-east-2.amazonaws.com/latam-backend:latest
-            docker run -p 8443:8443 -d --name fineract 916148231619.dkr.ecr.us-east-2.amazonaws.com/latam-backed:latest
+            cd fineract
+            docker-compose down
+            docker-compose up -d
