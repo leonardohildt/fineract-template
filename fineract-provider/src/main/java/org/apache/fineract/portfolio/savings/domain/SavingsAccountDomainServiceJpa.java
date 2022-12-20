@@ -28,7 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.apache.fineract.accounting.journalentry.domain.BitaCoraMasterRepository;
 import org.apache.fineract.accounting.journalentry.service.JournalEntryWritePlatformService;
+import org.apache.fineract.accounting.journalentry.service.LumaAccountingProcessorForSavingsService;
 import org.apache.fineract.infrastructure.configuration.domain.ConfigurationDomainService;
 import org.apache.fineract.infrastructure.core.service.DateUtils;
 import org.apache.fineract.infrastructure.security.service.PlatformSecurityContext;
@@ -61,6 +63,8 @@ public class SavingsAccountDomainServiceJpa implements SavingsAccountDomainServi
     private final ConfigurationDomainService configurationDomainService;
     private final DepositAccountOnHoldTransactionRepository depositAccountOnHoldTransactionRepository;
     private final BusinessEventNotifierService businessEventNotifierService;
+    private final LumaAccountingProcessorForSavingsService lumaAccountingProcessorForSavingsService;
+    private final BitaCoraMasterRepository bitaCoraMasterRepository;
 
     @Autowired
     public SavingsAccountDomainServiceJpa(final SavingsAccountRepositoryWrapper savingsAccountRepository,
@@ -69,7 +73,9 @@ public class SavingsAccountDomainServiceJpa implements SavingsAccountDomainServi
             final JournalEntryWritePlatformService journalEntryWritePlatformService,
             final ConfigurationDomainService configurationDomainService, final PlatformSecurityContext context,
             final DepositAccountOnHoldTransactionRepository depositAccountOnHoldTransactionRepository,
-            final BusinessEventNotifierService businessEventNotifierService) {
+            final BusinessEventNotifierService businessEventNotifierService,
+            final LumaAccountingProcessorForSavingsService lumaAccountingProcessorForSavingsService,
+            final BitaCoraMasterRepository bitaCoraMasterRepository) {
         this.savingsAccountRepository = savingsAccountRepository;
         this.savingsAccountTransactionRepository = savingsAccountTransactionRepository;
         this.applicationCurrencyRepositoryWrapper = applicationCurrencyRepositoryWrapper;
@@ -78,6 +84,8 @@ public class SavingsAccountDomainServiceJpa implements SavingsAccountDomainServi
         this.context = context;
         this.depositAccountOnHoldTransactionRepository = depositAccountOnHoldTransactionRepository;
         this.businessEventNotifierService = businessEventNotifierService;
+        this.lumaAccountingProcessorForSavingsService = lumaAccountingProcessorForSavingsService;
+        this.bitaCoraMasterRepository = bitaCoraMasterRepository;
     }
 
     @Transactional
@@ -142,6 +150,18 @@ public class SavingsAccountDomainServiceJpa implements SavingsAccountDomainServi
         }
         this.savingsAccountRepository.save(account);
 
+        var master = this.lumaAccountingProcessorForSavingsService.createJournalEntriesForSavingsWithdrawal(account, withdrawal,
+                transactionBooleanValues);
+        this.bitaCoraMasterRepository.save(master);
+        for (SavingsAccountTransaction tx : account.getTransactions()) {
+            if (!existingTransactionIds.contains(tx.getId())) {
+                if (tx.isChargeTransaction()) {
+                    var mt = this.lumaAccountingProcessorForSavingsService.createJournalEntriesForSavingsCharges(account, tx);
+                    this.bitaCoraMasterRepository.save(mt);
+                }
+            }
+        }
+
         postJournalEntries(account, existingTransactionIds, existingReversedTransactionIds, transactionBooleanValues.isAccountTransfer(),
                 backdatedTxnsAllowedTill);
 
@@ -171,6 +191,7 @@ public class SavingsAccountDomainServiceJpa implements SavingsAccountDomainServi
             final LocalDate transactionDate, final BigDecimal transactionAmount, final PaymentDetail paymentDetail,
             final boolean isAccountTransfer, final boolean isRegularTransaction,
             final SavingsAccountTransactionType savingsAccountTransactionType, final boolean backdatedTxnsAllowedTill) {
+
         AppUser user = getAppUserIfPresent();
         account.validateForAccountBlock();
         account.validateForCreditBlock();
@@ -220,6 +241,13 @@ public class SavingsAccountDomainServiceJpa implements SavingsAccountDomainServi
         }
 
         this.savingsAccountRepository.saveAndFlush(account);
+
+        // Bitacora
+        SavingsTransactionBooleanValues transactionBooleanValues = new SavingsTransactionBooleanValues(isAccountTransfer,
+                isRegularTransaction, false, false, false, false, false, false, false, false);
+        var master = this.lumaAccountingProcessorForSavingsService.createJournalEntriesForSavingsDeposit(account, deposit,
+                transactionBooleanValues);
+        this.bitaCoraMasterRepository.save(master);
 
         postJournalEntries(account, existingTransactionIds, existingReversedTransactionIds, isAccountTransfer, backdatedTxnsAllowedTill);
         businessEventNotifierService.notifyPostBusinessEvent(new SavingsDepositBusinessEvent(deposit));

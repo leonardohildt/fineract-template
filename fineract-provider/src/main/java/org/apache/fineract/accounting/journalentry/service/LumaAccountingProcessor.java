@@ -23,6 +23,7 @@ import static org.apache.fineract.accounting.journalentry.domain.BitacoraMasterC
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import org.apache.fineract.accounting.journalentry.domain.BitaCoraMaster;
 import org.apache.fineract.accounting.journalentry.domain.BitaCoraMasterRepository;
@@ -30,6 +31,8 @@ import org.apache.fineract.infrastructure.codes.data.CodeCauseProcessMappingData
 import org.apache.fineract.infrastructure.codes.service.CodeCauseProcessMappingPlatformService;
 import org.apache.fineract.portfolio.exchange.domain.Exchange;
 import org.apache.fineract.portfolio.exchange.domain.ExchangeRepository;
+import org.apache.fineract.portfolio.loanaccount.domain.Loan;
+import org.apache.fineract.portfolio.savings.data.SavingsAccountData;
 import org.apache.fineract.portfolio.savings.domain.SavingsAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -109,7 +112,15 @@ public class LumaAccountingProcessor {
         return account.depositAccountType().isFixedDeposit() ? ACCOUNT_TYPE_PF : ACCOUNT_TYPE_AH;
     }
 
+    public String getAccountTypeFromSavingsAccount(SavingsAccountData account) {
+        return account.depositAccountType().isFixedDeposit() ? ACCOUNT_TYPE_PF : ACCOUNT_TYPE_AH;
+    }
+
     public String getStatusStringFromSavings(SavingsAccount account) {
+        return account.isActive() ? "ACTIVO" : "INACTIVO";
+    }
+
+    public String getStatusStringFromSavings(SavingsAccountData account) {
         return account.isActive() ? "ACTIVO" : "INACTIVO";
     }
 
@@ -121,15 +132,15 @@ public class LumaAccountingProcessor {
         return status;
     }
 
-    /*
-     * public String getGroupStringFromLoan(Loan loan) { String groupString = loan.getLoanPurpose() == null ? null :
-     * String.valueOf(loan.getLoanPurpose().position()); return groupString; }
-     */
+    public String getGroupStringFromLoan(Loan loan) {
+        String groupString = loan.getLoanPurpose() == null ? null : String.valueOf(loan.getLoanPurpose().position());
+        return groupString;
+    }
 
-    /*
-     * public String getTypeOfLoanString(Loan loan) { String loanTypeString = Objects.isNull(loan.getFund()) ? null :
-     * String.valueOf(loan.getFund().getId()); return loanTypeString; }
-     */
+    public String getTypeOfLoanString(Loan loan) {
+        String loanTypeString = Objects.isNull(loan.getFund()) ? null : String.valueOf(loan.getFund().getId());
+        return loanTypeString;
+    }
 
     public CodeCauseProcessMappingData getCausalFromProccessIdAndCurrencyIntCode(String processId, Integer currencyIntCode) {
         return this.codeCauseProcessMappingPlatformService.retrieveOne(processId, currencyIntCode);

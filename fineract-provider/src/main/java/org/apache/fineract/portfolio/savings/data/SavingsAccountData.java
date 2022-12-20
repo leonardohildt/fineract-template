@@ -1114,4 +1114,21 @@ public final class SavingsAccountData implements Serializable {
     public void setLastSavingsAccountTransaction(SavingsAccountTransactionData lastSavingsAccountTransaction) {
         this.lastSavingsAccountTransaction = lastSavingsAccountTransaction;
     }
+
+    public Long getLumaClientId() {
+
+        Long clientId = null;
+        if (this.clientId != null) {
+            clientId = this.clientId();
+        }
+        if (this.groupId != null) {
+            clientId = this.groupId();
+        }
+
+        return clientId;
+    }
+
+    public boolean isActive() {
+        return this.activatedOnDate != null;
+    }
 }

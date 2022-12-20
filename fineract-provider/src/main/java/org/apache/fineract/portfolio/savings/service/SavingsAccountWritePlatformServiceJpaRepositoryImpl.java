@@ -47,7 +47,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.fineract.accounting.journalentry.domain.BitaCoraMasterRepository;
 import org.apache.fineract.accounting.journalentry.service.JournalEntryWritePlatformService;
+import org.apache.fineract.accounting.journalentry.service.LumaAccountingProcessorForSavingsService;
 import org.apache.fineract.infrastructure.configuration.domain.ConfigurationDomainService;
 import org.apache.fineract.infrastructure.core.api.JsonCommand;
 import org.apache.fineract.infrastructure.core.data.ApiParameterError;
@@ -88,6 +90,7 @@ import org.apache.fineract.portfolio.charge.domain.ChargeRepositoryWrapper;
 import org.apache.fineract.portfolio.charge.domain.ChargeTimeType;
 import org.apache.fineract.portfolio.client.domain.Client;
 import org.apache.fineract.portfolio.client.exception.ClientNotActiveException;
+import org.apache.fineract.portfolio.exchange.domain.ExchangeRepository;
 import org.apache.fineract.portfolio.group.domain.Group;
 import org.apache.fineract.portfolio.group.exception.GroupNotActiveException;
 import org.apache.fineract.portfolio.note.domain.Note;
@@ -166,6 +169,9 @@ public class SavingsAccountWritePlatformServiceJpaRepositoryImpl implements Savi
     private final GSIMRepositoy gsimRepository;
     private final JdbcTemplate jdbcTemplate;
     private final SavingsAccountInterestPostingService savingsAccountInterestPostingService;
+    private final LumaAccountingProcessorForSavingsService lumaAccountingProcessorForSavingsService;
+    private final BitaCoraMasterRepository bitaCoraMasterRepository;
+    private final ExchangeRepository exchangeRepository;
 
     @Autowired
     public SavingsAccountWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context,
@@ -188,7 +194,9 @@ public class SavingsAccountWritePlatformServiceJpaRepositoryImpl implements Savi
             final EntityDatatableChecksWritePlatformService entityDatatableChecksWritePlatformService,
             final AppUserRepositoryWrapper appuserRepository, final StandingInstructionRepository standingInstructionRepository,
             final BusinessEventNotifierService businessEventNotifierService, final GSIMRepositoy gsimRepository,
-            final JdbcTemplate jdbcTemplate, final SavingsAccountInterestPostingService savingsAccountInterestPostingService) {
+            final JdbcTemplate jdbcTemplate, final SavingsAccountInterestPostingService savingsAccountInterestPostingService,
+            final LumaAccountingProcessorForSavingsService lumaAccountingProcessorForSavingsService,
+            final BitaCoraMasterRepository bitaCoraMasterRepository, final ExchangeRepository exchangeRepository) {
         this.context = context;
         this.savingAccountRepositoryWrapper = savingAccountRepositoryWrapper;
         this.savingsAccountTransactionRepository = savingsAccountTransactionRepository;
@@ -217,6 +225,9 @@ public class SavingsAccountWritePlatformServiceJpaRepositoryImpl implements Savi
         this.gsimRepository = gsimRepository;
         this.jdbcTemplate = jdbcTemplate;
         this.savingsAccountInterestPostingService = savingsAccountInterestPostingService;
+        this.lumaAccountingProcessorForSavingsService = lumaAccountingProcessorForSavingsService;
+        this.bitaCoraMasterRepository = bitaCoraMasterRepository;
+        this.exchangeRepository = exchangeRepository;
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(SavingsAccountWritePlatformServiceJpaRepositoryImpl.class);
@@ -444,7 +455,7 @@ public class SavingsAccountWritePlatformServiceJpaRepositoryImpl implements Savi
         final boolean isInterestTransfer = false;
         final boolean isWithdrawBalance = false;
         final SavingsTransactionBooleanValues transactionBooleanValues = new SavingsTransactionBooleanValues(isAccountTransfer,
-                isRegularTransaction, isApplyWithdrawFee, isInterestTransfer, isWithdrawBalance);
+                isRegularTransaction, isApplyWithdrawFee, isInterestTransfer, isWithdrawBalance, false, false, false, false, false);
         final SavingsAccountTransaction withdrawal = this.savingsAccountDomainService.handleWithdrawal(account, fmt, transactionDate,
                 transactionAmount, paymentDetail, transactionBooleanValues, backdatedTxnsAllowedTill);
 
@@ -618,20 +629,53 @@ public class SavingsAccountWritePlatformServiceJpaRepositoryImpl implements Savi
             account.postInterest(mc, today, isInterestTransfer, isSavingsInterestPostingAtCurrentPeriodEnd, financialYearBeginningMonth,
                     postInterestOnDate, backdatedTxnsAllowedTill, postReversals);
 
+            List<SavingsAccountTransaction> withHoldTaxtransactions = new ArrayList<>();
+            List<SavingsAccountTransaction> postingtransactions = new ArrayList<>();
             if (!backdatedTxnsAllowedTill) {
                 List<SavingsAccountTransaction> transactions = account.getTransactions();
                 for (SavingsAccountTransaction accountTransaction : transactions) {
                     if (accountTransaction.getId() == null) {
                         this.savingsAccountTransactionRepository.save(accountTransaction);
+                        if (accountTransaction.isWithHoldTaxAndNotReversed()) {
+                            withHoldTaxtransactions.add(accountTransaction);
+                        } else if (accountTransaction.isInterestPosting()) {
+                            postingtransactions.add(accountTransaction);
+                        }
+                    }
+                }
+            }
+            if (backdatedTxnsAllowedTill) {
+                List<SavingsAccountTransaction> transactions = account.getSavingsAccountTransactionsWithPivotConfig();
+                this.savingsAccountTransactionRepository.saveAll(transactions);
+                for (SavingsAccountTransaction accountTransaction : transactions) {
+                    if (accountTransaction.isWithHoldTaxAndNotReversed()) {
+                        withHoldTaxtransactions.add(accountTransaction);
+                    } else if (accountTransaction.isInterestPosting()) {
+                        postingtransactions.add(accountTransaction);
                     }
                 }
             }
 
-            if (backdatedTxnsAllowedTill) {
-                this.savingsAccountTransactionRepository.saveAll(account.getSavingsAccountTransactionsWithPivotConfig());
-            }
-
             this.savingAccountRepositoryWrapper.saveAndFlush(account);
+
+            if (postingtransactions.size() > 0) {
+                // for generating transaction id's
+                for (SavingsAccountTransaction postingtransaction : postingtransactions) {
+                    var master = lumaAccountingProcessorForSavingsService.createJournalEntriesForSavingsInterestPost(account,
+                            postingtransaction);
+                    if (master.isGreaterThanZero()) {
+                        this.bitaCoraMasterRepository.save(master);
+                    }
+                }
+
+            }
+            // Bitacora ISRINT
+            if (withHoldTaxtransactions.size() > 0) {
+                for (SavingsAccountTransaction tx : withHoldTaxtransactions) {
+                    var mt = lumaAccountingProcessorForSavingsService.createJournalEntriesForSavingsISR(account, tx);
+                    this.bitaCoraMasterRepository.save(mt);
+                }
+            }
 
             postJournalEntries(account, existingTransactionIds, existingReversedTransactionIds, backdatedTxnsAllowedTill);
         }
@@ -679,6 +723,36 @@ public class SavingsAccountWritePlatformServiceJpaRepositoryImpl implements Savi
             }
             savingsAccountData.setExistingTransactionIds(existingTransactionIds);
             savingsAccountData.setExistingReversedTransactionIds(existingReversedTransactionIds);
+        }
+
+        List<SavingsAccountTransactionData> withHoldTaxtransactions = new ArrayList<>();
+        List<SavingsAccountTransactionData> postingtransactions = new ArrayList<>();
+
+        List<SavingsAccountTransactionData> transactions = savingsAccountData.getNewSavingsAccountTransactionData();
+        for (SavingsAccountTransactionData accountTransaction : transactions) {
+            if (accountTransaction.isWithHoldTaxAndNotReversed()) {
+                withHoldTaxtransactions.add(accountTransaction);
+            } else if (accountTransaction.isInterestPosting()) {
+                postingtransactions.add(accountTransaction);
+            }
+        }
+        if (postingtransactions.size() > 0) {
+            // for generating transaction id's
+            for (SavingsAccountTransactionData postingtransaction : postingtransactions) {
+                var master = lumaAccountingProcessorForSavingsService.createJournalEntriesForSavingsInterestPost(savingsAccountData,
+                        postingtransaction);
+                if (master.isGreaterThanZero()) {
+                    this.bitaCoraMasterRepository.save(master);
+                }
+            }
+
+        }
+        // Bitacora ISRINT
+        if (withHoldTaxtransactions.size() > 0) {
+            for (SavingsAccountTransactionData tx : withHoldTaxtransactions) {
+                var mt = lumaAccountingProcessorForSavingsService.createJournalEntriesForSavingsISR(savingsAccountData, tx);
+                this.bitaCoraMasterRepository.save(mt);
+            }
         }
         return savingsAccountData;
     }
@@ -1021,7 +1095,7 @@ public class SavingsAccountWritePlatformServiceJpaRepositoryImpl implements Savi
             final boolean isApplyWithdrawFee = false;
             final boolean isInterestTransfer = false;
             final SavingsTransactionBooleanValues transactionBooleanValues = new SavingsTransactionBooleanValues(isAccountTransfer,
-                    isRegularTransaction, isApplyWithdrawFee, isInterestTransfer, isWithdrawBalance);
+                    isRegularTransaction, isApplyWithdrawFee, isInterestTransfer, isWithdrawBalance, false, false, false, false, false);
 
             this.savingsAccountDomainService.handleWithdrawal(account, fmt, closedDate, transactionAmount, paymentDetail,
                     transactionBooleanValues, false);

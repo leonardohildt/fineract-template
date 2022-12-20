@@ -37,7 +37,9 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.fineract.accounting.journalentry.domain.BitaCoraMasterRepository;
 import org.apache.fineract.accounting.journalentry.service.JournalEntryWritePlatformService;
+import org.apache.fineract.accounting.journalentry.service.LumaAccountingProcessorForLoan;
 import org.apache.fineract.infrastructure.codes.domain.CodeValue;
 import org.apache.fineract.infrastructure.codes.domain.CodeValueRepositoryWrapper;
 import org.apache.fineract.infrastructure.configuration.domain.ConfigurationDomainService;
@@ -269,6 +271,8 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
     private final LoanRepository loanRepository;
     private final RepaymentWithPostDatedChecksAssembler repaymentWithPostDatedChecksAssembler;
     private final PostDatedChecksRepository postDatedChecksRepository;
+    private final LumaAccountingProcessorForLoan lumaAccountingProcessorForLoan;
+    private final BitaCoraMasterRepository bitaCoraMasterRepository;
 
     private LoanLifecycleStateMachine defaultLoanLifecycleStateMachine() {
         final List<LoanStatus> allowedLoanStatuses = Arrays.asList(LoanStatus.values());
@@ -530,7 +534,14 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
 
         // During a disbursement, the entityId should be the disbursement transaction id
         if (!isAccountTransfer) {
-            entityId = loan.getLoanTransactions().get(loan.getLoanTransactions().size() - 1).getId();
+            var disbursementTransaction = loan.getLoanTransactions().get(loan.getLoanTransactions().size() - 1);
+            entityId = disbursementTransaction.getId();
+            // Post Journal Entry
+            var bitaCoraMasterDisburse = this.lumaAccountingProcessorForLoan.createJournalEntryForLoanDisbursement(disbursementTransaction,
+                    loan, null);
+            if (bitaCoraMasterDisburse != null) {
+                this.bitaCoraMasterRepository.save(bitaCoraMasterDisburse);
+            }
         }
 
         return new CommandProcessingResultBuilder() //

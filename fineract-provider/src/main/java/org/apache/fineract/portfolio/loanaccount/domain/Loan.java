@@ -80,6 +80,7 @@ import org.apache.fineract.organisation.office.domain.Office;
 import org.apache.fineract.organisation.staff.domain.Staff;
 import org.apache.fineract.organisation.workingdays.domain.WorkingDays;
 import org.apache.fineract.organisation.workingdays.service.WorkingDaysUtil;
+import org.apache.fineract.portfolio.account.domain.AccountAssociations;
 import org.apache.fineract.portfolio.accountdetails.domain.AccountType;
 import org.apache.fineract.portfolio.calendar.data.CalendarHistoryDataWrapper;
 import org.apache.fineract.portfolio.calendar.domain.Calendar;
@@ -395,6 +396,9 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom {
 
     @Column(name = "fixed_principal_percentage_per_installment", scale = 2, precision = 5, nullable = true)
     private BigDecimal fixedPrincipalPercentagePerInstallment;
+
+    @OneToOne(mappedBy = "loanAccount", fetch = FetchType.LAZY)
+    private AccountAssociations accountAssociations;
 
     public static Loan newIndividualLoanApplication(final String accountNo, final Client client, final Integer loanType,
             final LoanProduct loanProduct, final Fund fund, final Staff officer, final CodeValue loanPurpose,
@@ -6848,4 +6852,28 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom {
         // Return empty set instead of null to avoid NPE
         return Optional.ofNullable(this.charges).orElse(new HashSet<>());
     }
+
+    public AccountAssociations getAccountAssociations() {
+        return accountAssociations;
+    }
+
+    public CodeValue getLoanPurpose() {
+        return loanPurpose;
+    }
+
+    public Fund getFund() {
+        return fund;
+    }
+
+    public Long getLumaClientId() {
+        Long clientId = null;
+        if (this.client != null) {
+            clientId = this.client.getId();
+        }
+        if (this.group != null) {
+            clientId = this.group.getId();
+        }
+        return clientId;
+    }
+
 }

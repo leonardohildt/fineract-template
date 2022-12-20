@@ -31,11 +31,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.apache.fineract.infrastructure.core.domain.AbstractAuditableCustom;
+import org.apache.fineract.organisation.office.domain.Office;
 
 @Entity
 @Table(name = "bitacora_master")
@@ -84,8 +87,9 @@ public class BitaCoraMaster extends AbstractAuditableCustom {
     @Column(name = "observations", length = 500)
     private String observations;
 
-    @Column(name = "office_id")
-    private Long officeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "office_id")
+    private Office office;
 
     @Column(name = "client_id")
     private Long clientId;
@@ -107,7 +111,7 @@ public class BitaCoraMaster extends AbstractAuditableCustom {
     }
 
     public BitaCoraMaster(Date transactionDate, String transactionType, Long transaction, Long accountId, String accountType,
-            String currency, BigDecimal amount, String status, String group, String typeOfCredit, String category) {
+            String currency, BigDecimal amount, String status, String group, String typeOfCredit) {
         this.transactionDate = transactionDate;
         this.transactionType = transactionType;
         this.transaction = transaction;
@@ -118,7 +122,7 @@ public class BitaCoraMaster extends AbstractAuditableCustom {
         this.status = status;
         this.group = group;
         this.typeOfCredit = typeOfCredit;
-        this.category = category;
+        this.category = "A";
         this.clientType = "DELPUBLICO";
     }
 
@@ -128,10 +132,10 @@ public class BitaCoraMaster extends AbstractAuditableCustom {
         transactionTypeStringBuilder.append(" ");
         transactionTypeStringBuilder.append(this.transactionType);
         BitaCoraMaster newMasterLog = new BitaCoraMaster(this.transactionDate, transactionTypeStringBuilder.toString(), this.transaction,
-                this.accountId, this.accountType, this.currency, this.amount, this.status, this.group, this.typeOfCredit, this.category);
+                this.accountId, this.accountType, this.currency, this.amount, this.status, this.group, this.typeOfCredit);
         newMasterLog.setClientId(this.clientId);
         newMasterLog.setExchangeRate(this.exchangeRate.subtract(BigDecimal.ONE));
-        newMasterLog.setOfficeId(this.officeId);
+        newMasterLog.setOffice(this.office);
         newMasterLog.setClientType(this.clientType);
 
         if (Objects.nonNull(this.bitaCoraDetails)) {
@@ -243,10 +247,6 @@ public class BitaCoraMaster extends AbstractAuditableCustom {
         this.bitaCoraDetails = bitaCoraDetails;
     }
 
-    public void setOfficeId(Long officeId) {
-        this.officeId = officeId;
-    }
-
     public void setClientId(Long clientId) {
         this.clientId = clientId;
     }
@@ -312,7 +312,7 @@ public class BitaCoraMaster extends AbstractAuditableCustom {
     }
 
     public Long getOfficeId() {
-        return officeId;
+        return this.office.getId();
     }
 
     public Long getClientId() {
@@ -321,5 +321,9 @@ public class BitaCoraMaster extends AbstractAuditableCustom {
 
     public BigDecimal getExchangeRate() {
         return exchangeRate;
+    }
+
+    public void setOffice(Office office) {
+        this.office = office;
     }
 }
