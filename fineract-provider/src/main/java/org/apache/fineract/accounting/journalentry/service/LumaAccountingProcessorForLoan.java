@@ -19,14 +19,24 @@
 package org.apache.fineract.accounting.journalentry.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import org.apache.fineract.accounting.journalentry.data.LumaBitacoraTransactionTypeEnum;
 import org.apache.fineract.accounting.journalentry.domain.BitaCoraDetails;
 import org.apache.fineract.accounting.journalentry.domain.BitaCoraMaster;
 import org.apache.fineract.accounting.journalentry.domain.BitacoraMasterConstants;
 import org.apache.fineract.infrastructure.core.service.DateUtils;
 import org.apache.fineract.organisation.monetary.data.CurrencyData;
+import org.apache.fineract.organisation.monetary.domain.Money;
 import org.apache.fineract.organisation.monetary.service.CurrencyReadPlatformService;
 import org.apache.fineract.portfolio.cupo.domain.Cupo;
+import org.apache.fineract.portfolio.loanaccount.domain.Loan;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanCharge;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanChargePaidBy;
+import org.apache.fineract.portfolio.loanaccount.domain.LoanTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -345,66 +355,92 @@ public class LumaAccountingProcessorForLoan extends LumaAccountingProcessor {
      * paymentDifferentialAmount.setScale(2, RoundingMode.DOWN)); master.addBitaCoraDetails(repaymentDetails);
      *
      * return master; }
-     *
-     * public BitaCoraMaster createJournalEntryForLoanDisbursement(final LoanTransaction loanTransaction, Loan loan,
-     * final LoanTransaction repaymentAtDisbursementTransaction) { List<LoanCharge> disbursementCharges = new
-     * ArrayList<>(); BigDecimal disbursementFees = BigDecimal.ZERO; for (LoanCharge loanCharge : loan.getLoanCharges())
-     * { if (loanCharge.isDisbursementCharge() && loanCharge.isActive()) { if (repaymentAtDisbursementTransaction !=
-     * null && repaymentAtDisbursementTransaction.getFeeChargesPortion(loan.getCurrency()).isGreaterThanZero() &&
-     * repaymentAtDisbursementTransaction.getTransactionDate().isEqual(loanTransaction.getTransactionDate())) { for
-     * (LoanChargePaidBy paidBy : repaymentAtDisbursementTransaction.getLoanChargesPaid()) { if
-     * (paidBy.getLoanCharge().getId().equals(loanCharge.getId())) { disbursementCharges.add(loanCharge);
-     * disbursementFees = disbursementFees.add(loanCharge.getAmount(loan.getCurrency()).getAmount()); } } } } }
-     *
-     * CurrencyData currencyData = this.currencyReadPlatformService.retrieveCurrency(loan.getCurrencyCode()); String
-     * status = getStatusStringFromLoanNpa(loan.isNpa()); String currencyString = currencyData.getIntCode().toString();
-     * String groupString = getGroupStringFromLoan(loan); String typeOfCredit = getTypeOfLoanString(loan); String
-     * loanCategory = loan.getCategory();
-     *
-     * Date transactionDate = loanTransaction.getDateOf();
-     *
-     * String transactionType = loan.getDisbursementDetails().size() == 0 ? BitacoraMasterConstants.TRX_TYPE_DESEMBOLSO
-     * : BitacoraMasterConstants.TRX_TYPE_DESEMBOLSO_MULTITRANCHES; if (loan.getAccountAssociations() != null &&
-     * loan.getAccountAssociations().linkedCupo() != null) { transactionType =
-     * BitacoraMasterConstants.TRX_TYPE_DESEMBOLSO_CUPO; } final BigDecimal exchangeRate =
-     * getExchangeRate(currencyData.code(), transactionDate); Long transactionId = loanTransaction.getId(); BigDecimal
-     * amount = loanTransaction.getAmount(loan.getCurrency()).getAmount().add(disbursementFees); String reference =
-     * loanTransaction.getPaymentDetail() == null ? null : loanTransaction.getPaymentDetail().getReceiptNumber();
-     *
-     * BitaCoraMaster master = new BitaCoraMaster(transactionDate, transactionType, transactionId, loan.getId(),
-     * BitacoraMasterConstants.ACCOUNT_TYPE_PR, currencyString, amount, status, groupString, typeOfCredit,
-     * loanCategory); master.setOffice(loan.getOffice()); master.setExchangeRate(exchangeRate);
-     * master.setClientId(loan.getLumaClientId()); master.setReference(reference);
-     *
-     * BigDecimal principalDetailsDifferentialAmount =
-     * loanTransaction.getAmount(loan.getCurrency()).multipliedBy(exchangeRate) .getAmount(); BitaCoraDetails
-     * principalDetails = new BitaCoraDetails( "Desembolso " + (loan.getDisbursementDetails().size() == 0 ? " " : "EG ")
-     * + "del prestamo: " + loan.getId(), loanTransaction.getAmount(loan.getCurrency()).getAmount(), LOAN_CAUSAL, null,
-     * 0, "CAPITAL", 1, 1, "Public", master, principalDetailsDifferentialAmount);
-     * master.addBitaCoraDetails(principalDetails);
-     *
-     * for (LoanCharge loanCharge : disbursementCharges) { BigDecimal feesDifferentialAmount =
-     * Money.of(loan.getCurrency(), loanCharge.getAmount(loan.getCurrency()).getAmount())
-     * .multipliedBy(exchangeRate).getAmount(); BitaCoraDetails disbursementFee = new
-     * BitaCoraDetails(loanCharge.getCharge().getName(), loanCharge.getAmount(loan.getCurrency()).getAmount(),
-     * LOAN_CAUSAL, "", loanCharge.getCharge().getId().intValue(), loanCharge.getCharge().getAmountTypeCode().label(),
-     * 1, 1, "Public", master, feesDifferentialAmount); master.addBitaCoraDetails(disbursementFee); }
-     *
-     * BigDecimal depositNetAmount = loanTransaction.getAmount(loan.getCurrency()).minus(disbursementFees).getAmount();
-     *
-     * // LS-83[Log Contable] - Diferencial / PNC-4835 // BigDecimal feesDifferentialAmount =
-     * Money.of(loan.getCurrency(), // depositNetAmount).multipliedBy(exchangeRate).getAmount(); BigDecimal
-     * feesDifferentialAmount = BigDecimal.ZERO; for (BitaCoraDetails d : master.details()) {
-     * d.setDifferential(d.getDifferential().setScale(2, RoundingMode.DOWN)); if ("CAPITAL".equals(d.getAmountType())) {
-     * feesDifferentialAmount = feesDifferentialAmount.add(d.getDifferential()); } else { feesDifferentialAmount =
-     * feesDifferentialAmount.subtract(d.getDifferential()); } }
-     *
-     * BitaCoraDetails disbursementFee = new BitaCoraDetails("Deposito a cuenta " + loan.getId(), depositNetAmount,
-     * LOAN_CAUSAL, null, 0, "DESEMBOLSOCTA", 1, 1, "Public", master, feesDifferentialAmount.setScale(2,
-     * RoundingMode.DOWN)); master.addBitaCoraDetails(disbursementFee);
-     *
-     * return master; }
-     *
+     */
+
+    public BitaCoraMaster createJournalEntryForLoanDisbursement(final LoanTransaction loanTransaction, Loan loan,
+            final LoanTransaction repaymentAtDisbursementTransaction) {
+        List<LoanCharge> disbursementCharges = new ArrayList<>();
+        BigDecimal disbursementFees = BigDecimal.ZERO;
+        for (LoanCharge loanCharge : loan.getLoanCharges()) {
+            if (loanCharge.isDisbursementCharge() && loanCharge.isActive()) {
+                if (repaymentAtDisbursementTransaction != null
+                        && repaymentAtDisbursementTransaction.getFeeChargesPortion(loan.getCurrency()).isGreaterThanZero()
+                        && repaymentAtDisbursementTransaction.getTransactionDate().isEqual(loanTransaction.getTransactionDate())) {
+                    for (LoanChargePaidBy paidBy : repaymentAtDisbursementTransaction.getLoanChargesPaid()) {
+                        if (paidBy.getLoanCharge().getId().equals(loanCharge.getId())) {
+                            disbursementCharges.add(loanCharge);
+                            disbursementFees = disbursementFees.add(loanCharge.getAmount(loan.getCurrency()).getAmount());
+                        }
+                    }
+                }
+            }
+        }
+
+        CurrencyData currencyData = this.currencyReadPlatformService.retrieveCurrency(loan.getCurrencyCode());
+        String status = getStatusStringFromLoanNpa(loan.isNpa());
+        String currencyString = currencyData.getIntCode().toString();
+        String groupString = getGroupStringFromLoan(loan);
+        String typeOfCredit = getTypeOfLoanString(loan);
+
+        Date transactionDate = Date.from(loanTransaction.getDateOf().atStartOfDay(DateUtils.getDateTimeZoneOfTenant()).toInstant());
+
+        String transactionType = loan.getDisbursementDetails().size() == 0 ? BitacoraMasterConstants.TRX_TYPE_DESEMBOLSO
+                : BitacoraMasterConstants.TRX_TYPE_DESEMBOLSO_MULTITRANCHES;
+        if (loan.getAccountAssociations() != null && loan.getAccountAssociations().linkedCupo() != null) {
+            transactionType = BitacoraMasterConstants.TRX_TYPE_DESEMBOLSO_CUPO;
+        }
+        final BigDecimal exchangeRate = getExchangeRate(currencyData.code(), transactionDate);
+        Long transactionId = loanTransaction.getId();
+        BigDecimal amount = loanTransaction.getAmount(loan.getCurrency()).getAmount().add(disbursementFees);
+        String reference = loanTransaction.getPaymentDetail() == null ? null : loanTransaction.getPaymentDetail().getReceiptNumber();
+
+        BitaCoraMaster master = new BitaCoraMaster(transactionDate, transactionType, transactionId, loan.getId(),
+                BitacoraMasterConstants.ACCOUNT_TYPE_PR, currencyString, amount, status, groupString, typeOfCredit);
+        master.setOffice(loan.getOffice());
+        master.setExchangeRate(exchangeRate);
+        master.setClientId(loan.getLumaClientId());
+        master.setReference(reference);
+
+        BigDecimal principalDetailsDifferentialAmount = loanTransaction.getAmount(loan.getCurrency()).multipliedBy(exchangeRate)
+                .getAmount();
+        BitaCoraDetails principalDetails = new BitaCoraDetails(
+                "Desembolso " + (loan.getDisbursementDetails().size() == 0 ? " " : "EG ") + "del prestamo: " + loan.getId(),
+                loanTransaction.getAmount(loan.getCurrency()).getAmount(), LOAN_CAUSAL, null, 0, "CAPITAL", 1, 1, "Public", master,
+                principalDetailsDifferentialAmount);
+        master.addBitaCoraDetails(principalDetails);
+
+        for (LoanCharge loanCharge : disbursementCharges) {
+            BigDecimal feesDifferentialAmount = Money.of(loan.getCurrency(), loanCharge.getAmount(loan.getCurrency()).getAmount())
+                    .multipliedBy(exchangeRate).getAmount();
+            BitaCoraDetails disbursementFee = new BitaCoraDetails(loanCharge.getCharge().getName(),
+                    loanCharge.getAmount(loan.getCurrency()).getAmount(), LOAN_CAUSAL, "", loanCharge.getCharge().getId().intValue(),
+                    "DESEMBOLSOCTA", 1, 1, "Public", master, feesDifferentialAmount);
+            master.addBitaCoraDetails(disbursementFee);
+        }
+
+        BigDecimal depositNetAmount = loanTransaction.getAmount(loan.getCurrency()).minus(disbursementFees).getAmount();
+
+        // LS-83[Log Contable] - Diferencial / PNC-4835
+        // BigDecimal feesDifferentialAmount = Money.of(loan.getCurrency(),
+        // depositNetAmount).multipliedBy(exchangeRate).getAmount();
+        BigDecimal feesDifferentialAmount = BigDecimal.ZERO;
+        for (BitaCoraDetails d : master.details()) {
+            d.setDifferential(d.getDifferential().setScale(2, RoundingMode.DOWN));
+            if ("CAPITAL".equals(d.getAmountType())) {
+                feesDifferentialAmount = feesDifferentialAmount.add(d.getDifferential());
+            } else {
+                feesDifferentialAmount = feesDifferentialAmount.subtract(d.getDifferential());
+            }
+        }
+
+        BitaCoraDetails disbursementFee = new BitaCoraDetails("Deposito a cuenta " + loan.getId(), depositNetAmount, LOAN_CAUSAL, null, 0,
+                "DESEMBOLSOCTA", 1, 1, "Public", master, feesDifferentialAmount.setScale(2, RoundingMode.DOWN));
+        master.addBitaCoraDetails(disbursementFee);
+
+        return master;
+    }
+
+    /*
      * public BitaCoraMaster createJournalEntriesForCategoryChange(Loan loan, LumaBalanceHData lumaBalanceHData, String
      * oldCategory) {
      *
@@ -553,40 +589,57 @@ public class LumaAccountingProcessorForLoan extends LumaAccountingProcessor {
      * destinationClientType_penalidad, master_penalidad, differential_penalidad); details.add(details_penalidad);
      *
      * master.setBitaCoraDetails(details); return master; }
-     *
-     * public BitaCoraMaster createJournalEntry(LumaBitacoraTransactionTypeEnum lumaBitacoraTransactionTypeEnum, Loan
-     * loan, LocalDate transactionLocalDate, BigDecimal amount) { String status =
-     * getStatusStringFromLoanNpa(loan.isNpa()); final Date transactionDate =
-     * Date.from(transactionLocalDate.atStartOfDay(DateUtils.getDateTimeZoneOfTenant()).toInstant()); String
-     * transactionType = lumaBitacoraTransactionTypeEnum.getCode();
-     *
-     * // transactionType for "MULTITRANCHES" if (transactionType.equals(BitacoraMasterConstants.TRX_TYPE_APROBACION)) {
-     * transactionType = loan.getDisbursementDetails().size() == 0 ? BitacoraMasterConstants.TRX_TYPE_APROBACION :
-     * BitacoraMasterConstants.TRX_TYPE_APROBACION_MULTITRANCHES; }
-     *
-     * // transactionType for "CUPO" if (loan.getAccountAssociations() != null &&
-     * loan.getAccountAssociations().linkedCupo() != null) { switch (transactionType) { case
-     * BitacoraMasterConstants.TRX_TYPE_APROBACION: transactionType = BitacoraMasterConstants.TRX_TYPE_APROBACION_CUPO;
-     * break; case BitacoraMasterConstants.TRX_TYPE_FORMALIZACION: transactionType =
-     * BitacoraMasterConstants.TRX_TYPE_FORMALIZACION_CUPO; break; default: break; } } CurrencyData currencyData =
-     * this.currencyReadPlatformService.retrieveCurrency(loan.getCurrencyCode()); final BigDecimal exchangeRate =
-     * getExchangeRate(currencyData.code(), transactionDate); String currencyString =
-     * currencyData.getIntCode().toString(); String groupString = getGroupStringFromLoan(loan); String typeOfCredit =
-     * getTypeOfLoanString(loan); String loanCategory = loan.getCategory(); Long transactionId = null;
-     *
-     * BitaCoraMaster master = new BitaCoraMaster(transactionDate, transactionType, transactionId, loan.getId(),
-     * lumaBitacoraTransactionTypeEnum.getAccountType(), currencyString, amount, status, groupString, typeOfCredit,
-     * loanCategory); master.setOffice(loan.getOffice()); master.setExchangeRate(exchangeRate);
-     * master.setClientId(loan.getLumaClientId());
-     * master.setObservations(lumaBitacoraTransactionTypeEnum.getDescription() + loan.getAccountNumber());
-     *
-     * BigDecimal amountDifferential = amount.multiply(exchangeRate); BitaCoraDetails masterDetails = new
-     * BitaCoraDetails(lumaBitacoraTransactionTypeEnum.getHeading() + loan.getId(), amount, LOAN_CAUSAL, null, null,
-     * lumaBitacoraTransactionTypeEnum.getAmountType(), null, null, null, master, amountDifferential);
-     * master.addBitaCoraDetails(masterDetails);
-     *
-     * if (master.isGreaterThanZero()) return master; return null; }
-     *
+     */
+
+    public BitaCoraMaster createJournalEntry(LumaBitacoraTransactionTypeEnum lumaBitacoraTransactionTypeEnum, Loan loan,
+            LocalDate transactionLocalDate, BigDecimal amount) {
+        String status = getStatusStringFromLoanNpa(loan.isNpa());
+        final Date transactionDate = Date.from(transactionLocalDate.atStartOfDay(DateUtils.getDateTimeZoneOfTenant()).toInstant());
+        String transactionType = lumaBitacoraTransactionTypeEnum.getCode();
+
+        // transactionType for "MULTITRANCHES"
+        if (transactionType.equals(BitacoraMasterConstants.TRX_TYPE_APROBACION)) {
+            transactionType = loan.getDisbursementDetails().size() == 0 ? BitacoraMasterConstants.TRX_TYPE_APROBACION
+                    : BitacoraMasterConstants.TRX_TYPE_APROBACION_MULTITRANCHES;
+        }
+
+        // transactionType for "CUPO"
+        if (loan.getAccountAssociations() != null && loan.getAccountAssociations().linkedCupo() != null) {
+            switch (transactionType) {
+                case BitacoraMasterConstants.TRX_TYPE_APROBACION:
+                    transactionType = BitacoraMasterConstants.TRX_TYPE_APROBACION_CUPO;
+                break;
+                case BitacoraMasterConstants.TRX_TYPE_FORMALIZACION:
+                    transactionType = BitacoraMasterConstants.TRX_TYPE_FORMALIZACION_CUPO;
+                break;
+                default:
+                break;
+            }
+        }
+        CurrencyData currencyData = this.currencyReadPlatformService.retrieveCurrency(loan.getCurrencyCode());
+        final BigDecimal exchangeRate = getExchangeRate(currencyData.code(), transactionDate);
+        String currencyString = currencyData.getIntCode().toString();
+        String groupString = getGroupStringFromLoan(loan);
+        String typeOfCredit = getTypeOfLoanString(loan);
+        Long transactionId = null;
+
+        BitaCoraMaster master = new BitaCoraMaster(transactionDate, transactionType, transactionId, loan.getId(),
+                lumaBitacoraTransactionTypeEnum.getAccountType(), currencyString, amount, status, groupString, typeOfCredit);
+        master.setOffice(loan.getOffice());
+        master.setExchangeRate(exchangeRate);
+        master.setClientId(loan.getLumaClientId());
+        master.setObservations(lumaBitacoraTransactionTypeEnum.getDescription() + loan.getAccountNumber());
+
+        BigDecimal amountDifferential = amount.multiply(exchangeRate);
+        BitaCoraDetails masterDetails = new BitaCoraDetails(lumaBitacoraTransactionTypeEnum.getHeading() + loan.getId(), amount,
+                LOAN_CAUSAL, null, null, lumaBitacoraTransactionTypeEnum.getAmountType(), null, null, null, master, amountDifferential);
+        master.addBitaCoraDetails(masterDetails);
+
+        if (master.isGreaterThanZero()) return master;
+        return null;
+    }
+
+    /*
      * public List<BitaCoraMaster> createJournalEntriesForLoanGuarantees(Loan loan) { List<BitaCoraMaster> retMasterList
      * = new ArrayList<>();
      *
@@ -898,10 +951,9 @@ public class LumaAccountingProcessorForLoan extends LumaAccountingProcessor {
         final BigDecimal exchangeRate = getExchangeRate(cupo.getCurrencyCode(), transactionDate);
         String groupString = "1";
         String typeOfCredit = "1";
-        String loanCategory = "A";
 
         BitaCoraMaster master = new BitaCoraMaster(transactionDate, transactionType, transactionId, accountId, accountType, currencyString,
-                amount, status, groupString, typeOfCredit, loanCategory);
+                amount, status, groupString, typeOfCredit);
 
         master.setExchangeRate(exchangeRate);
         master.setClientId(cupo.getClientId() != null ? cupo.getClientId() : cupo.getGroupId());
@@ -935,10 +987,9 @@ public class LumaAccountingProcessorForLoan extends LumaAccountingProcessor {
         final BigDecimal exchangeRate = getExchangeRate(cupo.getCurrencyCode(), transactionDate);
         String groupString = "1";
         String typeOfCredit = "1";
-        String loanCategory = "A";
 
         BitaCoraMaster master = new BitaCoraMaster(transactionDate, transactionType, transactionId, accountId, accountType, currencyString,
-                amount, status, groupString, typeOfCredit, loanCategory);
+                amount, status, groupString, typeOfCredit);
 
         master.setExchangeRate(exchangeRate);
         master.setClientId(cupo.getClientId() != null ? cupo.getClientId() : cupo.getGroupId());
@@ -972,10 +1023,9 @@ public class LumaAccountingProcessorForLoan extends LumaAccountingProcessor {
         final BigDecimal exchangeRate = getExchangeRate(cupo.getCurrencyCode(), transactionDate);
         String groupString = "1";
         String typeOfCredit = "1";
-        String loanCategory = "A";
 
         BitaCoraMaster master = new BitaCoraMaster(transactionDate, transactionType, transactionId, accountId, accountType, currencyString,
-                amount, status, groupString, typeOfCredit, loanCategory);
+                amount, status, groupString, typeOfCredit);
 
         master.setExchangeRate(exchangeRate);
         master.setClientId(cupo.getClientId() != null ? cupo.getClientId() : cupo.getGroupId());
@@ -1009,10 +1059,9 @@ public class LumaAccountingProcessorForLoan extends LumaAccountingProcessor {
         final BigDecimal exchangeRate = getExchangeRate(cupo.getCurrencyCode(), transactionDate);
         String groupString = "1";
         String typeOfCredit = "1";
-        String loanCategory = "A";
 
         BitaCoraMaster master = new BitaCoraMaster(transactionDate, transactionType, transactionId, accountId, accountType, currencyString,
-                amount, status, groupString, typeOfCredit, loanCategory);
+                amount, status, groupString, typeOfCredit);
 
         master.setExchangeRate(exchangeRate);
         master.setClientId(cupo.getClientId() != null ? cupo.getClientId() : cupo.getGroupId());

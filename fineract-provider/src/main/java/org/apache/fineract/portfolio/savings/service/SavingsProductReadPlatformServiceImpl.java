@@ -106,7 +106,7 @@ public class SavingsProductReadPlatformServiceImpl implements SavingsProductRead
             sqlBuilder.append(
                     "sp.currency_code as currencyCode, sp.currency_digits as currencyDigits, sp.currency_multiplesof as inMultiplesOf, ");
             sqlBuilder.append("curr.name as currencyName, curr.internationalized_name_code as currencyNameCode, ");
-            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, ");
+            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, curr.int_code as intCode, ");
             sqlBuilder.append("sp.nominal_annual_interest_rate as nominalAnnualInterestRate, ");
             sqlBuilder.append("sp.interest_compounding_period_enum as compoundingInterestPeriodType, ");
             sqlBuilder.append("sp.interest_posting_period_enum as interestPostingPeriodType, ");

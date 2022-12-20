@@ -34,6 +34,10 @@ import java.util.Set;
 import javax.persistence.PersistenceException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.fineract.accounting.journalentry.data.LumaBitacoraTransactionTypeEnum;
+import org.apache.fineract.accounting.journalentry.domain.BitaCoraMaster;
+import org.apache.fineract.accounting.journalentry.domain.BitaCoraMasterRepository;
+import org.apache.fineract.accounting.journalentry.service.LumaAccountingProcessorForLoan;
 import org.apache.fineract.infrastructure.accountnumberformat.domain.AccountNumberFormat;
 import org.apache.fineract.infrastructure.accountnumberformat.domain.AccountNumberFormatRepositoryWrapper;
 import org.apache.fineract.infrastructure.accountnumberformat.domain.EntityAccountType;
@@ -204,6 +208,9 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
     private final LoanCollateralManagementRepository loanCollateralManagementRepository;
     private final ClientCollateralManagementRepository clientCollateralManagementRepository;
     private final CupoRepositoryWrapper cupoRepositoryWrapper;
+    private final LumaAccountingProcessorForLoan lumaAccountingProcessorForLoan;
+    @Autowired
+    private BitaCoraMasterRepository bitaCoraMasterRepository;
 
     @Autowired
     public LoanApplicationWritePlatformServiceJpaRepositoryImpl(final PlatformSecurityContext context, final FromJsonHelper fromJsonHelper,
@@ -233,7 +240,7 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
             final LoanProductReadPlatformService loanProductReadPlatformService,
             final LoanCollateralManagementRepository loanCollateralManagementRepository,
             final ClientCollateralManagementRepository clientCollateralManagementRepository,
-            final CupoRepositoryWrapper cupoRepositoryWrapper) {
+            final CupoRepositoryWrapper cupoRepositoryWrapper, final LumaAccountingProcessorForLoan lumaAccountingProcessorForLoan) {
         this.context = context;
         this.fromJsonHelper = fromJsonHelper;
         this.loanApplicationTransitionApiJsonValidator = loanApplicationTransitionApiJsonValidator;
@@ -277,6 +284,7 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
         this.loanCollateralManagementRepository = loanCollateralManagementRepository;
         this.clientCollateralManagementRepository = clientCollateralManagementRepository;
         this.cupoRepositoryWrapper = cupoRepositoryWrapper;
+        this.lumaAccountingProcessorForLoan = lumaAccountingProcessorForLoan;
     }
 
     private LoanLifecycleStateMachine defaultLoanLifecycleStateMachine() {
@@ -1536,6 +1544,15 @@ public class LoanApplicationWritePlatformServiceJpaRepositoryImpl implements Loa
                 final Note note = Note.loanNote(loan, noteText);
                 changes.put("note", noteText);
                 this.noteRepository.save(note);
+            }
+
+            // Post Journal Entry
+            final LocalDate approvedOnDate = command.localDateValueOfParameterNamed(LoanApiConstants.approvedOnDateParameterName);
+            final BigDecimal principal = command.bigDecimalValueOfParameterNamed(LoanApiConstants.approvedLoanAmountParameterName);
+            BitaCoraMaster bitaCoraMaster = this.lumaAccountingProcessorForLoan
+                    .createJournalEntry(LumaBitacoraTransactionTypeEnum.LOANS_APPROVAL, loan, approvedOnDate, principal);
+            if (bitaCoraMaster != null) {
+                this.bitaCoraMasterRepository.save(bitaCoraMaster);
             }
 
             businessEventNotifierService.notifyPostBusinessEvent(new LoanApprovedBusinessEvent(loan));

@@ -181,7 +181,7 @@ public class PortfolioAccountReadPlatformServiceImpl implements PortfolioAccount
             sqlBuilder.append("sa.currency_code as currencyCode, sa.currency_digits as currencyDigits,");
             sqlBuilder.append("sa.currency_multiplesof as inMultiplesOf, ");
             sqlBuilder.append("curr.name as currencyName, curr.internationalized_name_code as currencyNameCode, ");
-            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol ");
+            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, curr.int_code as intCode ");
             sqlBuilder.append("from m_savings_account sa ");
             sqlBuilder.append("join m_savings_product sp ON sa.product_id = sp.id ");
             sqlBuilder.append("join m_currency curr on curr.code = sa.currency_code ");
@@ -245,7 +245,7 @@ public class PortfolioAccountReadPlatformServiceImpl implements PortfolioAccount
             sqlBuilder.append("la.currency_multiplesof as inMultiplesOf, ");
             sqlBuilder.append("la.total_overpaid_derived as totalOverpaid, ");
             sqlBuilder.append("curr.name as currencyName, curr.internationalized_name_code as currencyNameCode, ");
-            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol ");
+            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, curr.int_code as intCode ");
             sqlBuilder.append("from m_loan la ");
             sqlBuilder.append("join m_product_loan lp ON la.product_id = lp.id ");
             sqlBuilder.append("join m_currency curr on curr.code = la.currency_code ");
@@ -328,7 +328,7 @@ public class PortfolioAccountReadPlatformServiceImpl implements PortfolioAccount
             sqlBuilder.append(amountQueryString.toString());
             sqlBuilder.append(", ");
             sqlBuilder.append("curr.name as currencyName, curr.internationalized_name_code as currencyNameCode, ");
-            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol ");
+            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, curr.int_code as intCode ");
             sqlBuilder.append("from m_loan la ");
             sqlBuilder.append("join m_product_loan lp ON la.product_id = lp.id ");
             sqlBuilder.append("join m_currency curr on curr.code = la.currency_code ");

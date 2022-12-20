@@ -775,7 +775,7 @@ public class SavingsAccountReadPlatformServiceImpl implements SavingsAccountRead
             sqlBuilder.append(
                     "sa.currency_code as currencyCode, sa.currency_digits as currencyDigits, sa.currency_multiplesof as inMultiplesOf, ");
             sqlBuilder.append("curr.name as currencyName, curr.internationalized_name_code as currencyNameCode, ");
-            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, ");
+            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, curr.int_code as intCode, ");
 
             sqlBuilder.append("sa.nominal_annual_interest_rate as nominalAnnualInterestRate, ");
             sqlBuilder.append("sa.interest_compounding_period_enum as interestCompoundingPeriodType, ");
@@ -1341,7 +1341,7 @@ public class SavingsAccountReadPlatformServiceImpl implements SavingsAccountRead
             sqlBuilder.append(
                     "sa.currency_code as currencyCode, sa.currency_digits as currencyDigits, sa.currency_multiplesof as inMultiplesOf, ");
             sqlBuilder.append("curr.name as currencyName, curr.internationalized_name_code as currencyNameCode, ");
-            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, ");
+            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, curr.int_code as intCode, ");
             sqlBuilder.append("pt.value as paymentTypeName, ");
             sqlBuilder.append("tr.is_manual as postInterestAsOn ");
             sqlBuilder.append("from m_savings_account sa ");
@@ -1446,7 +1446,7 @@ public class SavingsAccountReadPlatformServiceImpl implements SavingsAccountRead
             sqlBuilder.append(
                     "sa.currency_code as currencyCode, sa.currency_digits as currencyDigits, sa.currency_multiplesof as inMultiplesOf, ");
             sqlBuilder.append("curr.name as currencyName, curr.internationalized_name_code as currencyNameCode, ");
-            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, ");
+            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, curr.int_code as intCode, ");
             sqlBuilder.append("sa.min_required_opening_balance as minRequiredOpeningBalance ");
             sqlBuilder.append("from m_savings_account sa ");
             sqlBuilder.append("join m_currency curr on curr.code = sa.currency_code ");
@@ -1494,7 +1494,7 @@ public class SavingsAccountReadPlatformServiceImpl implements SavingsAccountRead
             sqlBuilder.append(
                     "sp.currency_code as currencyCode, sp.currency_digits as currencyDigits, sp.currency_multiplesof as inMultiplesOf, ");
             sqlBuilder.append("curr.name as currencyName, curr.internationalized_name_code as currencyNameCode, ");
-            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, ");
+            sqlBuilder.append("curr.display_symbol as currencyDisplaySymbol, curr.int_code as intCode, ");
             sqlBuilder.append("sp.nominal_annual_interest_rate as nominalAnnualIterestRate, ");
             sqlBuilder.append("sp.interest_compounding_period_enum as interestCompoundingPeriodType, ");
             sqlBuilder.append("sp.interest_posting_period_enum as interestPostingPeriodType, ");

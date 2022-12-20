@@ -140,7 +140,8 @@ public class AccountTransfersWritePlatformServiceImpl implements AccountTransfer
                     backdatedTxnsAllowedTill);
 
             final SavingsTransactionBooleanValues transactionBooleanValues = new SavingsTransactionBooleanValues(isAccountTransfer,
-                    isRegularTransaction, fromSavingsAccount.isWithdrawalFeeApplicableForTransfer(), isInterestTransfer, isWithdrawBalance);
+                    isRegularTransaction, fromSavingsAccount.isWithdrawalFeeApplicableForTransfer(), isInterestTransfer, isWithdrawBalance,
+                    false, false, false, false, false);
             final SavingsAccountTransaction withdrawal = this.savingsAccountDomainService.handleWithdrawal(fromSavingsAccount, fmt,
                     transactionDate, transactionAmount, paymentDetail, transactionBooleanValues, backdatedTxnsAllowedTill);
 
@@ -167,7 +168,8 @@ public class AccountTransfersWritePlatformServiceImpl implements AccountTransfer
                     backdatedTxnsAllowedTill);
 
             final SavingsTransactionBooleanValues transactionBooleanValues = new SavingsTransactionBooleanValues(isAccountTransfer,
-                    isRegularTransaction, fromSavingsAccount.isWithdrawalFeeApplicableForTransfer(), isInterestTransfer, isWithdrawBalance);
+                    isRegularTransaction, fromSavingsAccount.isWithdrawalFeeApplicableForTransfer(), isInterestTransfer, isWithdrawBalance,
+                    false, false, false, false, false);
             final SavingsAccountTransaction withdrawal = this.savingsAccountDomainService.handleWithdrawal(fromSavingsAccount, fmt,
                     transactionDate, transactionAmount, paymentDetail, transactionBooleanValues, backdatedTxnsAllowedTill);
 
@@ -322,7 +324,7 @@ public class AccountTransfersWritePlatformServiceImpl implements AccountTransfer
             final SavingsTransactionBooleanValues transactionBooleanValues = new SavingsTransactionBooleanValues(isAccountTransfer,
                     isRegularTransaction, fromSavingsAccount.isWithdrawalFeeApplicableForTransfer(),
                     AccountTransferType.fromInt(accountTransferDTO.getTransferType()).isInterestTransfer(),
-                    accountTransferDTO.isExceptionForBalanceCheck());
+                    accountTransferDTO.isExceptionForBalanceCheck(), false, false, false, false, false);
 
             final SavingsAccountTransaction withdrawal = this.savingsAccountDomainService.handleWithdrawal(fromSavingsAccount,
                     accountTransferDTO.getFmt(), accountTransferDTO.getTransactionDate(), accountTransferDTO.getTransactionAmount(),
@@ -378,7 +380,7 @@ public class AccountTransfersWritePlatformServiceImpl implements AccountTransfer
             final SavingsTransactionBooleanValues transactionBooleanValues = new SavingsTransactionBooleanValues(isAccountTransfer,
                     isRegularTransaction, fromSavingsAccount.isWithdrawalFeeApplicableForTransfer(),
                     AccountTransferType.fromInt(accountTransferDTO.getTransferType()).isInterestTransfer(),
-                    accountTransferDTO.isExceptionForBalanceCheck());
+                    accountTransferDTO.isExceptionForBalanceCheck(), false, false, false, false, false);
 
             LocalDate transactionDate = accountTransferDTO.getTransactionDate();
             if (configurationDomainService.isSavingsInterestPostingAtCurrentPeriodEnd()

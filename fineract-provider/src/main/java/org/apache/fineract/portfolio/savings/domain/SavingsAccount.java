@@ -2261,6 +2261,21 @@ public class SavingsAccount extends AbstractPersistableCustom {
         return this.client;
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
+    public Long getLumaClientId() {
+        Long clientId = null;
+        if (this.client != null) {
+            clientId = this.clientId();
+        }
+        if (this.group != null) {
+            clientId = this.groupId();
+        }
+        return clientId;
+    }
+
     public BigDecimal getNominalAnnualInterestRate() {
         return this.nominalAnnualInterestRate;
     }

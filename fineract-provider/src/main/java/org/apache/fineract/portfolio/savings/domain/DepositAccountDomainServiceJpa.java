@@ -115,7 +115,7 @@ public class DepositAccountDomainServiceJpa implements DepositAccountDomainServi
         boolean isWithdrawBalance = false;
         final boolean backdatedTxnsAllowedTill = false;
         SavingsTransactionBooleanValues transactionBooleanValues = new SavingsTransactionBooleanValues(isAccountTransfer,
-                isRegularTransaction, applyWithdrawFee, isInterestTransfer, isWithdrawBalance);
+                isRegularTransaction, applyWithdrawFee, isInterestTransfer, isWithdrawBalance, false, false, false, false, false);
         return this.savingsAccountDomainService.handleWithdrawal(account, fmt, transactionDate, transactionAmount, paymentDetail,
                 transactionBooleanValues, backdatedTxnsAllowedTill);
     }
