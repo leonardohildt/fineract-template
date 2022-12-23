@@ -1055,6 +1055,19 @@ public class LoanWritePlatformServiceJpaRepositoryImpl implements LoanWritePlatf
         final List<Long> existingReversedTransactionIds = new ArrayList<>();
 
         final Money transactionAmountAsMoney = Money.of(loan.getCurrency(), transactionAmount);
+
+        if (transactionAmountAsMoney.isGreaterThanZero()) {
+            throw new PlatformServiceUnavailableException("error.msg.loan.transaction.update.not.allowed",
+                    "Loan transaction:" + transactionId + " update not allowed", transactionId);
+        } else {
+            LocalDate currentLocalDate = DateUtils.getLocalDateOfTenant();
+            if (transactionToAdjust.getTransactionDate().isBefore(currentLocalDate)) {
+                throw new PlatformServiceUnavailableException("error.msg.loan.transaction.reversed.not.allowed.for.backdated.transactions",
+                        "Loan transaction:" + transactionId + " reverse not allowed for a backdated transaction", transactionId,
+                        transactionDate);
+            }
+        }
+
         final PaymentDetail paymentDetail = this.paymentDetailWritePlatformService.createPaymentDetail(command, changes);
         LoanTransaction newTransactionDetail = LoanTransaction.repayment(loan.getOffice(), transactionAmountAsMoney, paymentDetail,
                 transactionDate, txnExternalId);

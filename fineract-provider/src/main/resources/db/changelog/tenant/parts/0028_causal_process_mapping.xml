@@ -1,0 +1,1566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements. See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership. The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="fineract" id="1">
+        <createTable tableName="m_code_causal">
+            <column name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="description" type="VARCHAR(150)"/>
+            <column name="allow_overdraft" type="BIT(1)"/>
+            <column name="is_cash_operation" type="BIT(1)"/>
+            <column name="operation_type" type="CHAR(1)"/>
+            <column name="send_acrm" type="BIT(1)"/>
+            <column name="codigo_acrm" type="INT"/>
+            <column name="short_description" type="VARCHAR(100)"/>
+            <column name="is_document" type="BIT(1)"/>
+            <column name="currency_int_code" type="INT"/>
+            <column name="is_shown_in_cashier_module" type="BIT(1)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="fineract" id="2" >
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1001"/>
+            <column name="description" value="Deposito"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1001"/>
+            <column name="short_description" value="Deposito"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1002"/>
+            <column name="description" value="Retiro"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1002"/>
+            <column name="short_description" value="Retiro"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module" valueBoolean="true"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1003"/>
+            <column name="description" value="Capitalizacion Interes Deposito (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1003"/>
+            <column name="short_description" value="Capitalización Interes"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1004"/>
+            <column name="description" value="Cargo por retiro"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1004"/>
+            <column name="short_description" value="Cargo por retiro"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1005"/>
+            <column name="description" value="Cargo anual"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1004"/>
+            <column name="short_description" value="Cargo anual"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1006"/>
+            <column name="description" value="Extorno cargo"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1006"/>
+            <column name="short_description" value="Extorno cargo"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1007"/>
+            <column name="description" value="Débito por cargo"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1007"/>
+            <column name="short_description" value="Débito por cargo"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1008"/>
+            <column name="description" value="Retiro ATM local"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1008"/>
+            <column name="short_description" value="Retiro ATM local"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1009"/>
+            <column name="description" value="Depósito en efectivo quetzales"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="true"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1009"/>
+            <column name="short_description" value="Depósito en efectivo quetzales"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module" valueBoolean="true"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1010"/>
+            <column name="description" value="Depósito con documentos Quetzales"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1010"/>
+            <column name="short_description" value="Depósito con documentos Quetzales"/>
+            <column name="is_document" valueBoolean="true"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1011"/>
+            <column name="description" value="Calculo interes (devengo) (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="false"/>
+            <column name="codigo_acrm" valueNumeric="1011"/>
+            <column name="short_description" value="Calculo interes (devengo)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1012"/>
+            <column name="description" value="Pago ISR, deposito (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1012"/>
+            <column name="short_description" value="Pago ISR"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1013"/>
+            <column name="description" value="Pago telefonía CLARO"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1013"/>
+            <column name="short_description" value="Pago telefonía CLARO"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1014"/>
+            <column name="description" value="Pago telefonía TIGO"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1014"/>
+            <column name="short_description" value="Pago telefonía TIGO"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1015"/>
+            <column name="description" value="Pago electricidad EEGSA"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1015"/>
+            <column name="short_description" value="Pago electricidad EEGSA"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1016"/>
+            <column name="description" value="Pago electricidad DEORSA"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1016"/>
+            <column name="short_description" value="Pago electricidad DEORSA"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1017"/>
+            <column name="description" value="Pago electricidad DEOCSA"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1017"/>
+            <column name="short_description" value="Pago electricidad DEOCSA"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1018"/>
+            <column name="description" value="Pago prestamo MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1018"/>
+            <column name="short_description" value="Pago prestamo"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1019"/>
+            <column name="description" value="Cargo cheque rechazado (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1019"/>
+            <column name="short_description" value="Cargo cheque rechazado"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1020"/>
+            <column name="description" value="Comisión x liberación de reserva anticipada"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1020"/>
+            <column name="short_description" value="Comisión x liberación de reserva anticipada"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1021"/>
+            <column name="description" value="Crédito transferencia local misma moneda MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1021"/>
+            <column name="short_description" value="Crédito transferencia local misma moneda"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1022"/>
+            <column name="description" value="Débito transferencia local misma moneda MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1022"/>
+            <column name="short_description" value="Débito transferencia local misma moneda"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1023"/>
+            <column name="description" value="Débito transferencia ACH MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1023"/>
+            <column name="short_description" value="Débito transferencia ACH"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1024"/>
+            <column name="description" value="Crédito transferencia ACH MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1024"/>
+            <column name="short_description" value="Crédito transferencia ACH"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1025"/>
+            <column name="description" value="Débito MN transferencia local distinta moneda"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1025"/>
+            <column name="short_description" value="Débito transferencia local distinta moneda"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1026"/>
+            <column name="description" value="Crédito MN transferencia local distinta moneda"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1026"/>
+            <column name="short_description" value="Crédito transferencia local distinta moneda"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1027"/>
+            <column name="description" value="Pago POS local"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1027"/>
+            <column name="short_description" value="Pago POS local"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1028"/>
+            <column name="description" value="Deposito ATM"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1028"/>
+            <column name="short_description" value="Deposito ATM"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1029"/>
+            <column name="description" value="Embargos / Desembargo MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="A"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1029"/>
+            <column name="short_description" value="Embargos"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1030"/>
+            <column name="description" value="Débito transferencia internacional "/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1030"/>
+            <column name="short_description" value="Débito transferencia internacional "/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1031"/>
+            <column name="description" value="Crédito transferencia internacional"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1031"/>
+            <column name="short_description" value="Crédito transferencia internacional"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1032"/>
+            <column name="description" value="Débito Pago de planilla MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1032"/>
+            <column name="short_description" value="Débito Pago de planilla"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1033"/>
+            <column name="description" value="Crédito Pago de planilla MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1033"/>
+            <column name="short_description" value="Crédito Pago de planilla"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1034"/>
+            <column name="description" value="Débito Pago a proveedores MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1034"/>
+            <column name="short_description" value="Débito Pago a proveedores"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1035"/>
+            <column name="description" value="Crédito Pago a proveedores MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1035"/>
+            <column name="short_description" value="Crédito Pago a proveedores"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1036"/>
+            <column name="description" value="Débito Transferencia móvil"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1036"/>
+            <column name="short_description" value="Débito Transferencia móvil"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1037"/>
+            <column name="description" value="Deposito efectivo dolares"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="true"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1037"/>
+            <column name="short_description" value="Deposito efectivo dolares"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module" valueBoolean="true"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1038"/>
+            <column name="description" value="Deposito con documentos en Dolares"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1038"/>
+            <column name="short_description" value="Deposito con documentos en Dolares"/>
+            <column name="is_document" valueBoolean="true"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1039"/>
+            <column name="description" value="Retiro ATM (Internacional)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1039"/>
+            <column name="short_description" value="Retiro ATM (Internacional)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1040"/>
+            <column name="description" value="Pago en POS (Internacional)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1040"/>
+            <column name="short_description" value="Pago en POS (Internacional)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1041"/>
+            <column name="description" value="Cheque rechazado en compensación MN"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1041"/>
+            <column name="short_description" value="Cheque rechazado"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1042"/>
+            <column name="description" value="Cheque rechazado en compensación ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1042"/>
+            <column name="short_description" value="Cheque rechazado"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1044"/>
+            <column name="description" value="Crédito transferencia local misma moneda ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1044"/>
+            <column name="short_description" value="Transferencia local"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1045"/>
+            <column name="description" value="Débito transferencia local misma moneda ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1045"/>
+            <column name="short_description" value="Transferencia local"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1046"/>
+            <column name="description" value="Débito transferencia ACH ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1046"/>
+            <column name="short_description" value="Debito ACH"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1047"/>
+            <column name="description" value="Crédito transferencia ACH ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1047"/>
+            <column name="short_description" value="Credito ACH"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1048"/>
+            <column name="description" value="Embargos / Desembargo del público ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="A"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1048"/>
+            <column name="short_description" value="Embargo/Desembargo"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1049"/>
+            <column name="description" value="Débito Pago de planilla ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1049"/>
+            <column name="short_description" value="Pago planilla"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1050"/>
+            <column name="description" value="Crédito Pago de planilla ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1050"/>
+            <column name="short_description" value="Pago planilla"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1051"/>
+            <column name="description" value="Débito Pago a proveedores ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1051"/>
+            <column name="short_description" value="Pago proveedores"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1052"/>
+            <column name="description" value="Crédito Pago a proveedores ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1052"/>
+            <column name="short_description" value="Pago proveedores"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1053"/>
+            <column name="description" value="Débito ME transferencia local distinta moneda"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1053"/>
+            <column name="short_description" value="Transferencia local"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1054"/>
+            <column name="description" value="Crédito ME transferencia local distinta moneda"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1054"/>
+            <column name="short_description" value="Transferencia local"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1055"/>
+            <column name="description" value="Retiro en efectivo ME"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="true"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1055"/>
+            <column name="short_description" value="Retiro en efectivo ME"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module" valueBoolean="true"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1056"/>
+            <column name="description" value="Deposito con Giro"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1056"/>
+            <column name="short_description" value="Deposito con Giro"/>
+            <column name="is_document" valueBoolean="true"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1057"/>
+            <column name="description" value="Pago ISR, plazo fijo (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1057"/>
+            <column name="short_description" value="Pago ISR"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1058"/>
+            <column name="description" value="Credito sobregiro (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="true"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1058"/>
+            <column name="short_description" value="Credito sobregiro"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1059"/>
+            <column name="description" value="Debito sobregiro (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="true"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1059"/>
+            <column name="short_description" value="Debito sobregiro"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1060"/>
+            <column name="description" value="Capitalizacion Interes Deposito (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1060"/>
+            <column name="short_description" value="Capitalización Interes"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1061"/>
+            <column name="description" value="Pago ISR, deposito (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1061"/>
+            <column name="short_description" value="Pago ISR"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1062"/>
+            <column name="description" value="Pago ISR, plazo fijo (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1062"/>
+            <column name="short_description" value="Pago ISR"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1063"/>
+            <column name="description" value="Calculo interes (devengo) (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="false"/>
+            <column name="codigo_acrm" valueNumeric="1063"/>
+            <column name="short_description" value="Calculo interes (devengo)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1064"/>
+            <column name="description" value="Cargo cheque rechazado (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1064"/>
+            <column name="short_description" value="Cargo cheque rechazado"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1065"/>
+            <column name="description" value="Credito sobregiro (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1065"/>
+            <column name="short_description" value="Credito sobregiro (USD)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1066"/>
+            <column name="description" value="Debito sobregiro (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1066"/>
+            <column name="short_description" value="Debito sobregiro (USD)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1067"/>
+            <column name="description" value="transferencia movil USD"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1060"/>
+            <column name="short_description" value="transferencia movil"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1068"/>
+            <column name="description" value="Credito devolucion rechazo ACH (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1068"/>
+            <column name="short_description" value="Credito devolucion rechazo ACH (USD)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="1069"/>
+            <column name="description" value="Comisión x liberación de reserva anticipada"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="1069"/>
+            <column name="short_description" value="Comisión x liberación de reserva anticipada"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="5001"/>
+            <column name="description" value="Desembolso (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="5001"/>
+            <column name="short_description" value="Desembolso (QTZ)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="5002"/>
+            <column name="description" value="Pago Prestamo Debito Automatico (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="5002"/>
+            <column name="short_description" value="Pago Prestamo (QTZ)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="5003"/>
+            <column name="description" value="Comision Desembolso (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="5003"/>
+            <column name="short_description" value="Comision Desembolso (QTZ)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="5004"/>
+            <column name="description" value="Pago de seguro de préstamos"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="5004"/>
+            <column name="short_description" value="Pago de seguro de préstamos"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="5010"/>
+            <column name="description" value="Pago Prestamo Transferencia (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="5010"/>
+            <column name="short_description" value="Pago Prestamo (QTZ)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="5011"/>
+            <column name="description" value="Desembolso (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="5011"/>
+            <column name="short_description" value="Desembolso prestamo"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="5012"/>
+            <column name="description" value="Comision Desembolso (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="5012"/>
+            <column name="short_description" value="Comision Desembolso"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="5013"/>
+            <column name="description" value="Pago Prestamo Debito Automatico (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="5013"/>
+            <column name="short_description" value="Pago Prestamo Debito Automatico"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="5014"/>
+            <column name="description" value="Pago Prestamo Transferencia (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="5014"/>
+            <column name="short_description" value="Pago Prestamo Transferencia"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="6002"/>
+            <column name="description" value="Apertura Plazo Fijo, deposito (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="6002"/>
+            <column name="short_description" value="Apertura Plazo Fijo, deposito (QTZ)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="6004"/>
+            <column name="description" value="Apertura Plazo Fijo, retiro (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="6004"/>
+            <column name="short_description" value="Apertura Plazo Fijo, retiro (QTZ)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="6005"/>
+            <column name="description" value="Capitalizacion Interes Plazo Fijo (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="6005"/>
+            <column name="short_description" value="Capitalizacion Interes"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="6006"/>
+            <column name="description" value="Apertura Plazo Fijo, retiro (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="D"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="6006"/>
+            <column name="short_description" value="Apertura Plazo Fijo, retiro"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="6007"/>
+            <column name="description" value="Apertura Plazo Fijo, deposito (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="6007"/>
+            <column name="short_description" value="Apertura Plazo Fijo"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="6008"/>
+            <column name="description" value="Capitalizacion Interes Plazo Fijo (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="true"/>
+            <column name="codigo_acrm" valueNumeric="6008"/>
+            <column name="short_description" value="Capitalización Interes Plazo Fijo"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="6009"/>
+            <column name="description" value="Calculo interes (devengo), plazo fijo (USD)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="false"/>
+            <column name="codigo_acrm" valueNumeric="6009"/>
+            <column name="short_description" value="Calculo interes (devengo), plazo fijo (USD)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+        <insert tableName="m_code_causal">
+            <column name="id" valueNumeric="6010"/>
+            <column name="description" value="Calculo interes (devengo), plazo fijo (QTZ)"/>
+            <column name="allow_overdraft" valueBoolean="false"/>
+            <column name="is_cash_operation" valueBoolean="false"/>
+            <column name="operation_type" value="C"/>
+            <column name="send_acrm" valueBoolean="false"/>
+            <column name="codigo_acrm" valueNumeric="6010"/>
+            <column name="short_description" value="Calculo interes (devengo), plazo fijo (QTZ)"/>
+            <column name="is_document" valueBoolean="false"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="is_shown_in_cashier_module"/>
+        </insert>
+    </changeSet>
+    <changeSet author="fineract" id="3" >
+        <createTable tableName="m_causal_process_mapping">
+            <column name="process_id" type="VARCHAR(5)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="operation" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency_int_code" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="causal_code" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trigger_type" type="VARCHAR(250)"/>
+            <column name="log_transaction_type" type="VARCHAR(250)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="destination" type="VARCHAR(400)"/>
+            <column name="description" type="VARCHAR(800)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="fineract" id="4" >
+        <createIndex indexName="FK_m_causal_process_mapping_m_code_causal_idx_idx" tableName="m_causal_process_mapping">
+            <column name="causal_code"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="fineract" id="5" >
+        <addForeignKeyConstraint baseColumnNames="causal_code" baseTableName="m_causal_process_mapping"
+                                 constraintName="FK_m_causal_process_mapping_m_code_causal_idx" deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                                 referencedTableName="m_code_causal" validate="true"/>
+    </changeSet>
+    <changeSet author="fineract" id="6" >
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P001"/>
+            <column name="operation" value="Desembolso - VALOR NETO"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="5001"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="NC"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Es el monto que se acredita a la cuenta de depósito, cuando se usa la opción desembolsar a ahorros."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P001"/>
+            <column name="operation" value="Desembolso - VALOR NETO"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="5011"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="NC"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Es el monto que se acredita a la cuenta de depósito, cuando se usa la opción desembolsar a ahorros."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P002"/>
+            <column name="operation" value="Comision"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="5003"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Es el monto que se resta de la cuenta de depósito, cuando se usa la opción desembolsar a ahorros y existe un cobro de comisión o cargos."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P002"/>
+            <column name="operation" value="Comision"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="5012"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Es el monto que se resta de la cuenta de depósito, cuando se usa la opción desembolsar a ahorros y existe un cobro de comisión o cargos."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P003"/>
+            <column name="operation" value="Pago de préstamo - débito automático  (ND)"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="5002"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Valor que se resta de la cuenta de depósito, cuando se hace un pago de préstamo en el JOB de débito automático."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P003"/>
+            <column name="operation" value="Pago de préstamo - débito automático  (ND)"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="5013"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Valor que se resta de la cuenta de depósito, cuando se hace un pago de préstamo en el JOB de débito automático."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P004"/>
+            <column name="operation" value="Pago de préstamo por Transferencia"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="5010"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="El middleware solicitará este causal, para enviar a hacer un retiro a la cuenta de depósito y posterior un pago a préstamo."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P004"/>
+            <column name="operation" value="Pago de préstamo por Transferencia"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="5014"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="El middleware solicitará este causal, para enviar a hacer un retiro a la cuenta de depósito y posterior un pago a préstamo."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P005"/>
+            <column name="operation" value="Por apertura de plazo fijo"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="6004"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Al crear un plazo fijo con monto inicial, y tener asociado el nuevo plazo fijo a una cuenta de depósito, el sistema hace un retiro a la cuenta de depósito."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P005"/>
+            <column name="operation" value="Por apertura de plazo fijo"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="6006"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Al crear un plazo fijo con monto inicial, y tener asociado el nuevo plazo fijo a una cuenta de depósito, el sistema hace un retiro a la cuenta de depósito."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P006"/>
+            <column name="operation" value="Apertura de plazo fijo"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="6002"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="NC"/>
+            <column name="destination" value="Cuenta de plazo fijo"/>
+            <column name="description" value="Al crear un plazo fijo con monto inicial, y tener asociado el nuevo plazo fijo a una cuenta de depósito, el sistema hace un créditp  a la cuenta de plazo fijo."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P006"/>
+            <column name="operation" value="Apertura de plazo fijo"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="6007"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="NC"/>
+            <column name="destination" value="Cuenta de plazo fijo"/>
+            <column name="description" value="Al crear un plazo fijo con monto inicial, y tener asociado el nuevo plazo fijo a una cuenta de depósito, el sistema hace un créditp  a la cuenta de plazo fijo."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P007"/>
+            <column name="operation" value="Capitalización de interés Plazo Fijo"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="6005"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="CAPINT"/>
+            <column name="destination" value="Cuenta de plazo fijo"/>
+            <column name="description" value="Proceso que traslada los intereses ganados de una cuenta de plazo fijo, aumentando el monto del plazo."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P007"/>
+            <column name="operation" value="Capitalización de interés Plazo Fijo"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="6008"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="CAPINT"/>
+            <column name="destination" value="Cuenta de plazo fijo"/>
+            <column name="description" value="Proceso que traslada los intereses ganados de una cuenta de plazo fijo, aumentando el monto del plazo."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P008"/>
+            <column name="operation" value="Capitalización de interés cuenta de depósito"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="1003"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="CAPINT"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Proceso que traslada los intereses ganados de una cuenta de depósito, aumentando el monto del plazo."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P008"/>
+            <column name="operation" value="Capitalización de interés cuenta de depósito"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="1060"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="CAPINT"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Proceso que traslada los intereses ganados de una cuenta de depósito, aumentando el monto del plazo."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P009"/>
+            <column name="operation" value="Pago de ISR por capitalización de interés,  cuenta de depósito"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="1012"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="ISRINT"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Proceso que cobra el impuesto sobre los intereses capitalizados (posteados) a las cuentas de depósito"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P009"/>
+            <column name="operation" value="Pago de ISR por capitalización de interés,  cuenta de depósito"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="1061"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="ISRINT"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Proceso que cobra el impuesto sobre los intereses capitalizados (posteados) a las cuentas de depósito"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P010"/>
+            <column name="operation" value="Pago de ISR por capitalización de interés,  cuenta de plazo fijo"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="1057"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="ISRINT"/>
+            <column name="destination" value="Cuenta de plazo fijo"/>
+            <column name="description" value="Proceso que cobra el impuesto sobre los intereses capitalizados (posteados) a las cuentas de depósito"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P010"/>
+            <column name="operation" value="Pago de ISR por capitalización de interés,  cuenta de plazo fijo"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="1062"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="ISRINT"/>
+            <column name="destination" value="Cuenta de plazo fijo"/>
+            <column name="description" value="Proceso que cobra el impuesto sobre los intereses capitalizados (posteados) a las cuentas de depósito"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P011"/>
+            <column name="operation" value="Cálculo de interés (devengo)"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="1011"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="CALCINT"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Acumular diariamente el interés de las cuentas de depósito"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P011"/>
+            <column name="operation" value="Cálculo de interés (devengo)"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="1063"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="CALCINT"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Acumular diariamente el interés de las cuentas de depósito"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P012"/>
+            <column name="operation" value="Cálculo de interés (devengo) Plazo Fijo"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="6010"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="CALCINT"/>
+            <column name="destination" value="Cuenta de plazo fijo"/>
+            <column name="description" value="Acumular diariamente el interés de las cuentas de plazo fijo"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P012"/>
+            <column name="operation" value="Cálculo de interés (devengo) Plazo Fijo"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="6009"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="CALCINT"/>
+            <column name="destination" value="Cuenta de plazo fijo"/>
+            <column name="description" value="Acumular diariamente el interés de las cuentas de plazo fijo"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P013"/>
+            <column name="operation" value="Cargo por cheque rechazado"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="1019"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Se aplica la nota por el monto del cheque recchazado."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P013"/>
+            <column name="operation" value="Cargo por cheque rechazado"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="1064"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Se aplica la nota por el monto del cheque recchazado."/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P014"/>
+            <column name="operation" value="Crédito por sobregiro"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="1058"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="SOBREGIROCR"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Por el monto sobregirado, para dejar el saldo en 0"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P014"/>
+            <column name="operation" value="Crédito por sobregiro"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="1065"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="SOBREGIROCR"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Por el monto sobregirado, para dejar el saldo en 0"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P015"/>
+            <column name="operation" value="Débito por sobregiro"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="1059"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="SOBREGIRODB"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Por el monto sobregirado, para dejar nuevamente el saldo sobregirado"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P015"/>
+            <column name="operation" value="Débito por sobregiro"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="1066"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="SOBREGIRODB"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Por el monto sobregirado, para dejar nuevamente el saldo sobregirado"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P016"/>
+            <column name="operation" value="Cheque rechazado"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="1041"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Rechazo de un cheque depositado"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P016"/>
+            <column name="operation" value="Cheque rechazado"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="1042"/>
+            <column name="trigger_type" value="TRIGGERED"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Cuenta de depósito"/>
+            <column name="description" value="Rechazo de un cheque depositado"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P017"/>
+            <column name="operation" value="Transferir intereses a cuentas de ahorros"/>
+            <column name="currency_int_code" valueNumeric="320"/>
+            <column name="causal_code" valueNumeric="1002"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Transferir intereses a cuentas de ahorros"/>
+            <column name="description" value="Transferir intereses a cuentas de ahorros"/>
+        </insert>
+        <insert tableName="m_causal_process_mapping">
+            <column name="process_id" value="P017"/>
+            <column name="operation" value="Transferir intereses a cuentas de ahorros"/>
+            <column name="currency_int_code" valueNumeric="840"/>
+            <column name="causal_code" valueNumeric="1055"/>
+            <column name="trigger_type" value="JOB"/>
+            <column name="log_transaction_type" value="ND"/>
+            <column name="destination" value="Transferir intereses a cuentas de ahorros"/>
+            <column name="description" value="Transferir intereses a cuentas de ahorros"/>
+        </insert>
+    </changeSet>
+    <changeSet author="fineract" id="7" >
+        <insert tableName="m_permission">
+            <column name="grouping" value="configuration"/>
+            <column name="code" value="CREATE_CODECAUSE"/>
+            <column name="entity_name" value="CODECAUSE" />
+            <column name="action_name" value="CREATE" />
+            <column name="can_maker_checker" valueBoolean="true" />
+        </insert>
+        <insert tableName="m_permission">
+            <column name="grouping" value="configuration"/>
+            <column name="code" value="UPDATE_CODECAUSE"/>
+            <column name="entity_name" value="CODECAUSE" />
+            <column name="action_name" value="UPDATE" />
+            <column name="can_maker_checker" valueBoolean="true" />
+        </insert>
+        <insert tableName="m_permission">
+            <column name="grouping" value="configuration"/>
+            <column name="code" value="DELETE_CODECAUSE"/>
+            <column name="entity_name" value="CODECAUSE" />
+            <column name="action_name" value="DELETE" />
+            <column name="can_maker_checker" valueBoolean="true" />
+        </insert>
+    </changeSet>
+    <changeSet author="fineract" id="8" >
+        <insert tableName="m_organisation_currency">
+            <column name="code" value="GTQ"/>
+            <column name="decimal_places" valueNumeric="2"/>
+            <column name="currency_multiplesof"/>
+            <column name="name" value="Guatemala Quetzal"/>
+            <column name="display_symbol" value="Q"/>
+            <column name="internationalized_name_code" value="currency.GTQ"/>
+            <column name="int_code" value="320"/>
+        </insert>
+        <update tableName="m_currency">
+            <column name="int_code" value="320"/>
+            <where>code='GTQ'</where>
+        </update>
+        <update tableName="m_currency">
+            <column name="int_code" value="978"/>
+            <where>code='EUR'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

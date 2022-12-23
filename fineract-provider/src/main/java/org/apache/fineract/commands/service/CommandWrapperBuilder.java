@@ -3563,4 +3563,27 @@ public class CommandWrapperBuilder {
         this.entityId = cupoId;
         return this;
     }
+
+    public CommandWrapperBuilder createCodeCause() {
+        this.actionName = "CREATE";
+        this.entityName = "CODECAUSE";
+        this.href = "/codecauses";
+        return this;
+    }
+
+    public CommandWrapperBuilder updateCodeCause(Long causeId) {
+        this.actionName = "UPDATE";
+        this.entityName = "CODECAUSE";
+        this.entityId = causeId;
+        this.href = "/codecauses/" + causeId;
+        return this;
+    }
+
+    public CommandWrapperBuilder deleteCodeCause(Long causeId) {
+        this.actionName = "DELETE";
+        this.entityName = "CODECAUSE";
+        this.entityId = causeId;
+        this.href = "/codecauses/" + causeId;
+        return this;
+    }
 }
