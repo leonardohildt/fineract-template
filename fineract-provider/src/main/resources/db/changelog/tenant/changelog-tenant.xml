@@ -42,4 +42,5 @@
     <include file="parts/0020_add_audit_entries.xml" relativeToChangelogFile="true"/>
     <include file="parts/0026_reversals_for_reversed_transactions.xml" relativeToChangelogFile="true"/>
     <include file="parts/0027_cupo_feature.xml" relativeToChangelogFile="true"/>
+    <include file="parts/0028_causal_process_mapping.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
